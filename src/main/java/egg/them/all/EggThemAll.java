@@ -161,10 +161,11 @@ public class EggThemAll {
                     .append("! Some of your kids lay eggs!")
                     .append(" You now have ")
                     .append(newEggCount)
-                    .append(" eggs!! :D");
+                    .append(" eggs!! :D\n");
                 eggCount.put(parent, newEggCount);
             } else {
-                messageToSend.append("You don't have any kids. o.o So sad, you'll probably die alone too.. lul");
+                messageToSend.append(parentFmt)
+                    .append(", you don't have any kids. o.o So sad, you'll probably die alone too.. lul\n");
             }
         }
     }
@@ -175,7 +176,8 @@ public class EggThemAll {
     public void eatCake(final StringBuilder messageToSend) {
         for (Map.Entry<String, Integer> entry : kidCount.entrySet()) {
             String parent = entry.getKey();
-            String parentFmt = "**" + parent + "**";
+            String parentFmt = EggUtils.bold(parent);
+
             int numKids = entry.getValue();
             int numEggs = eggCount.getOrDefault(parent, 0);
 
@@ -187,7 +189,7 @@ public class EggThemAll {
                     .append(" of your eggs!! Those bastards!")
                     .append(" You now have ")
                     .append(numEggs)
-                    .append(" eggs.");
+                    .append(" eggs.\n");
                 eggCount.put(parent, numEggs);
             } else if (numKids > numEggs) {
                 int kidsGone = numKids - numEggs;
@@ -196,7 +198,7 @@ public class EggThemAll {
                     .append(kidsGone)
                     .append(" of your kids ran away. You now have ")
                     .append(numEggs)
-                    .append(" kids and 0 eggs. :(");
+                    .append(" kids and 0 eggs. :(\n");
                 kidCount.put(parent, numEggs);
                 eggCount.put(parent, 0);
             }

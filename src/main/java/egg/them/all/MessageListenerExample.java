@@ -159,7 +159,7 @@ public class MessageListenerExample extends ListenerAdapter
             } else if (msg.toLowerCase().contains("tickle")) {
                 EggUtils.tickle(mentionedUsersName, msgBldr);
             } else if (msg.toLowerCase().contains("give eggs")) {
-                eggThemAll.ovulate(authorsName, msgBldr);
+                eggThemAll.ovulate(mentionedUsersName, msgBldr);
             } else if (msg.toLowerCase().contains("steal eggs")) {
                 eggThemAll.stealEggs(attacker, defender, msgBldr);
             } else if (msg.toLowerCase().contains("give kids")) {

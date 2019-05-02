@@ -26,7 +26,6 @@ public class EggUtils {
             String cleanString = messageToSend.replaceAll("\\r\\n|\\r|\\n", " ");
             String output = cleanString.trim().substring(0, 1).toUpperCase() + cleanString.substring(2) + ".";
             msgBuilder.append(output);
-            channel.sendMessage(output).queue();
         } catch (IOException ex) {
             // fail silently
         }
