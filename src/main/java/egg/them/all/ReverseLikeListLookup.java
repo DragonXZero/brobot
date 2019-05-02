@@ -1,3 +1,5 @@
+package egg.them.all;
+
 import com.sun.xml.internal.fastinfoset.util.StringArray;
 
 import java.io.BufferedReader;

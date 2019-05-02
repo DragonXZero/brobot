@@ -1,3 +1,5 @@
+package egg.them.all;
+
 public class LikeListItem {
     private final String show;
     private final String character;
