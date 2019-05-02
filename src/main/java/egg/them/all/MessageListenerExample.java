@@ -28,6 +28,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class MessageListenerExample extends ListenerAdapter
 {
+    private static EggThemAll eggThemAll;
     private static ReverseLikeListLookup rev;
     private static Map<String, Integer> eggCount;
     private static Map<String, Integer> kidCount;
@@ -50,6 +51,7 @@ public class MessageListenerExample extends ListenerAdapter
             rev = new ReverseLikeListLookup("/Users/john.vento/Desktop/JDA-master/src/examples/likelists.txt");
             System.out.println("Finished Building Like Lists!");
 
+            eggThemAll = new EggThemAll();
             eggCount = new HashMap<>();
             kidCount = new HashMap<>();
         }
@@ -142,209 +144,41 @@ public class MessageListenerExample extends ListenerAdapter
             System.out.printf("[GRP: %s]<%s>: %s\n", groupName, author.getName(), msg);
         }
 
-        msg = msg.toLowerCase();
+        final StringBuilder msgBldr = new StringBuilder();
+        final String authorsName = author.getName();
 
         List<Member> members = message.getMentionedMembers();
         if (members != null && members.size() == 1) {
-            Member member = members.get(0);
-            String name = member.getUser().getName();
-            if (name.equals("brobot")) {
-                try {
-                    MarkovChainGenerator markovChain = new MarkovChainGenerator();
-                    String messageToSend = markovChain.markov("/Users/john.vento/Desktop/JDA-master/src/examples/dictionaries/common_phrases", 2, 7);
-                    String cleanString = messageToSend.replaceAll("\\r\\n|\\r|\\n", " ");
-                    String output = cleanString.trim().substring(0, 1).toUpperCase() + cleanString.substring(2) + ".";
-                    channel.sendMessage(output).queue();
-                } catch (IOException ex) {
-                    channel.sendMessage(ex.getMessage()).queue();
-                    //fail silently
-                }
+            Member mentionedUser = members.get(0);
+            String mentionedUsersName = mentionedUser.getUser().getName();
+            String attacker = author.getName();
+            String defender = mentionedUsersName;
+
+            if (mentionedUsersName.equals("brobot")) {
+                EggUtils.markov(channel, msgBldr);
+            } else if (msg.toLowerCase().contains("tickle")) {
+                EggUtils.tickle(mentionedUsersName, msgBldr);
+            } else if (msg.toLowerCase().contains("give eggs")) {
+                eggThemAll.ovulate(authorsName, msgBldr);
+            } else if (msg.toLowerCase().contains("steal eggs")) {
+                eggThemAll.stealEggs(attacker, defender, msgBldr);
+            } else if (msg.toLowerCase().contains("give kids")) {
+                eggThemAll.giveKids(attacker, defender, msgBldr, msg);
             }
-            else if (msg.contains("tickle")) {
-                channel.sendMessage("Did someone say tickle??? You tickle **" + name + "** until they poo their pants a little bit. You regret it.").queue();
-            } else if (msg.contains("give eggs")) {
-                if(eggCount.containsKey(name)) {
-                    channel.sendMessage("I already gave you eggs, go away!!!").queue();
-                } else {
-                    eggCount.put(name, 100);
-                    channel.sendMessage("**" + name + "**, you now have 100 eggs.").queue();
-                }
-            } else if (msg.contains("steal from")) {
-                String attacker = author.getName();
-                String defender = name;
-                String attackerFmt = "**" + attacker + "**";
-                String defenderFmt = "**" + defender + "**";
-
-                if (attacker.equals(defender)) {
-                    channel.sendMessage("You can't steal from yourself dummy. HEY EVERYONE, " + attackerFmt + " IS A DUM DUM!!").queue();
-                }
-                else if (!eggCount.containsKey(attacker)) {
-                    channel.sendMessage("You aren't part of the eggame. Ask me for some eggs.").queue();
-                } else {
-                    if (!eggCount.containsKey(name)) {
-                        channel.sendMessage("This person isn't part of the eggame.").queue();
-                    } else {
-                        int attackerEggCount = eggCount.get(attacker);
-                        int defenderEggCount = eggCount.get(defender);
-
-                        if (defenderEggCount == 0) {
-                            channel.sendMessage("This person has no eggs. :( Nooooo, dōshite?????").queue();
-                        } else {
-                            int min = 1;
-                            int max = 20;
-                            int eggsToSteal = ThreadLocalRandom.current().nextInt(min, max + 1);
-
-                            while (eggsToSteal > defenderEggCount) {
-                                eggsToSteal = ThreadLocalRandom.current().nextInt(min, defenderEggCount <= 20 ? defenderEggCount + 1 : max + 1);
-                            }
-
-                            attackerEggCount += eggsToSteal;
-                            defenderEggCount -= eggsToSteal;
-
-                            channel.sendMessage(attackerFmt + ", you stole " + eggsToSteal + " eggs from " + defenderFmt + ". You now have " + attackerEggCount
-                                + " eggs and they have " + defenderEggCount + " eggs.").queue();
-                            eggCount.put(attacker, attackerEggCount);
-                            eggCount.put(defender, defenderEggCount);
-                        }
-                    }
-                }
-            } else if (msg.contains("give kids")) {
-                String attacker = author.getName();
-                String defender = name;
-                String attackerFmt = "**" + attacker + "**";
-                String defenderFmt = "**" + defender + "**";
-
-                if (attacker.equals(defender)) {
-                    channel.sendMessage("They're already your kids!").queue();
-                } else {
-                    int numKidsToGive = Integer.parseInt(msg.substring(msg.indexOf("[")+1, msg.indexOf("]")));
-                    int attackerNumKids = kidCount.getOrDefault(attacker, 0);
-                    int defenderNumKids = kidCount.getOrDefault(defender, 0);
-
-                    if (numKidsToGive > attackerNumKids) {
-                        channel.sendMessage("You don't have enough kids to give away. :( Go make more! o:").queue();
-                    } else {
-                        attackerNumKids -= numKidsToGive;
-                        defenderNumKids += numKidsToGive;
-
-                        channel.sendMessage("Congratulations " + attackerFmt + ", you got rid of " + numKidsToGive +
-                            " and gave them to " + defenderFmt +  ". You now have " + attackerNumKids
-                            + " kids and they have " + defenderNumKids + " kids.").queue();
-                    }
-                    kidCount.put(attacker, attackerNumKids);
-                    kidCount.put(defender, defenderNumKids);
-                }
+        } else {
+            if (msg.toLowerCase().contains("brobot who likes")) {
+                EggUtils.reverseLookup(channel, msg);
+            } else if (msg.toLowerCase().contains("fertilize")) {
+                eggThemAll.fertilize(authorsName, msgBldr, msg);
+            } else if (msg.toLowerCase().contains("copulate")) {
+                eggThemAll.copulate(authorsName, msgBldr);
+            } else if (msg.toLowerCase().contains("let them eat cake")) {
+                eggThemAll.eatCake(msgBldr);
+            } else if (msg.toLowerCase().contains("count my eggs")) {
+                eggThemAll.getResourceCount(authorsName, msgBldr);
             }
         }
 
-        if (msg.contains("brobot who likes")) {
-            String character = msg.substring(msg.indexOf("[")+1, msg.indexOf("]"));
-            String messageToSend = rev.reverseLookup(character);
-            channel.sendMessage(messageToSend).queue();
-        } else if (msg.contains("fertilize")) {
-            String fertilizer = message.getAuthor().getName();
-            String fertilizerFmt = "**" + message.getAuthor().getName() + "**";
-
-            int kidsToMake = Integer.parseInt(msg.substring(msg.indexOf("[")+1, msg.indexOf("]")));
-            int numEggs = eggCount.getOrDefault(fertilizer, 0);
-
-            if (kidsToMake > numEggs) {
-                channel.sendMessage("You don't have enough eggs :( Go steal some more!").queue();
-            } else {
-                numEggs -= kidsToMake;
-                int numKids = kidCount.getOrDefault(fertilizer, 0) + kidsToMake;
-                channel.sendMessage("Congratulations " + fertilizerFmt + ", you made " + kidsToMake
-                    + " kids! You now have " + numKids + " kids and " + numEggs + " eggs.").queue();
-                kidCount.put(fertilizer, numKids);
-                eggCount.put(fertilizer, numEggs);
-            }
-        } else if (msg.contains("let them eat cake")) {
-            for (Map.Entry<String, Integer> entry : kidCount.entrySet()) {
-                String parent = entry.getKey();
-                String parentFmt = "**" + parent + "**";
-                int numKids = entry.getValue();
-                int numEggs = eggCount.getOrDefault(parent, 0);
-
-                if (numKids > 0 && numKids <= numEggs) {
-                    numEggs -= numKids;
-                    channel.sendMessage(parentFmt + ", your kids ate " + numKids + " of your eggs!! Those bastards!"
-                        + " You now have " + numEggs + " eggs.").queue();
-                    eggCount.put(parent, numEggs);
-                } else if (numKids > numEggs) {
-                    int kidsGone = numKids - numEggs;
-                    channel.sendMessage(parentFmt + ", you didn't have enough eggs to feed your kids... "
-                        + kidsGone + " of your kids ran away. You now have " + numEggs + " kids and 0 eggs. :(").queue();
-                    kidCount.put(parent, numEggs);
-                    eggCount.put(parent, 0);
-                }
-            }
-        } else if (msg.contains("copulate")) {
-            if (!kidCount.containsKey(author.getName())) {
-                kidCount.put(author.getName(), 0);
-            }
-            for (Map.Entry<String, Integer> entry : kidCount.entrySet()) {
-                String parent = entry.getKey();
-                String parentFmt = "**" + parent + "**";
-                int numKids = entry.getValue();
-                int numEggs = eggCount.getOrDefault(parent, 0);
-                if (numKids > 0) {
-                    int newEggCount = numEggs + numKids / 2;
-
-                    channel.sendMessage("Congratulations " + parentFmt + "! Some of your kids lay eggs!"
-                        + " You now have " + newEggCount + " eggs!! :D").queue();
-                    eggCount.put(parent, newEggCount);
-                } else {
-                    channel.sendMessage("You don't have any kids. o.o So sad, you'll probably die alone too.. lul").queue();
-                }
-            }
-        }
-
-        if (msg.contains("count my eggs")) {
-            String authorFmt = "**" + author.getName() + "**";
-            int numEggs = eggCount.getOrDefault(author.getName(), 0);
-            int numKids = kidCount.getOrDefault(author.getName(), 0);
-            channel.sendMessage(authorFmt + ", you have " + numEggs + " eggs and " + numKids + " kids!").queue();
-        }
-    }
-
-//    private void displayLeaderBoard() {
-//        StringBuilder bldr = new StringBuilder();
-//
-//
-//        Map<String, Integer> leaders = new LinkedHashMap<>();
-//        eggCount.entrySet().stream()
-//            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-//            .forEachOrdered(x -> leaders.put(x.getKey(), x.getValue()));
-//    }
-
-    private void pokeduel(MessageChannel channel, Message message, List<Member> members) {
-        String msg = message.getContentDisplay();
-        if (msg.equals("brobot attack me")) {
-            channel.sendMessage("attack").queue();
-        }
-        if(!message.getAuthor().getName().equals("brobot")) {
-            if (msg.contains("(y/n)")) {
-                channel.sendMessage("y").queue();
-            } else if (message.getContentRaw().trim().isEmpty()) {
-                try {
-                    int n = 0;
-                    while (n++ < 5) {
-                        Thread.sleep(2000);
-                        message.addReaction("💥").queue();
-                    }
-                    Thread.sleep(3000);
-                    message.addReaction("✅").queue();
-                } catch (Exception e) {
-                    //fail silently
-                    e.printStackTrace();
-                }
-            } else if (members != null && members.size() == 1) {
-                Member member = members.get(0);
-                String name = member.getUser().getName();
-                if (name.equals("brobot") && message.getAuthor().getName().equals("Mudamaid 26")) {
-                    channel.sendMessage("attack").queue();
-                }
-            }
-        }
+        channel.sendMessage(msgBldr.toString());
     }
 }
