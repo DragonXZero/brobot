@@ -7,8 +7,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EggThemAll {
     private static final Map<String, Integer> eggCount = new HashMap<>();
     private static final Map<String, Integer> kidCount = new HashMap<>();
+    private final EggTimer eggTimer;
 
     public EggThemAll() {
+        eggTimer = new EggTimer(EggConstants.EGG_TIMER_UPDATE_FREQUENCY, EggConstants.EGG_TIMER_BLESSING_INCREMENT);
     }
 
     /*
@@ -82,7 +84,7 @@ public class EggThemAll {
     public void fertilize(final String user, final StringBuilder messageToSend, final String msg) {
         final String userFmt= EggUtils.bold(user);
 
-        int kidsToMake = Integer.parseInt(msg.substring(msg.indexOf("[")+1, msg.indexOf("]")));
+        final int kidsToMake = Integer.parseInt(msg.substring(msg.indexOf("[")+1, msg.indexOf("]")));
         int numEggs = eggCount.getOrDefault(user, 0);
 
         if (kidsToMake > numEggs) {
@@ -152,7 +154,7 @@ public class EggThemAll {
             final String parent = entry.getKey();
             final String parentFmt = EggUtils.bold(parent);
 
-            int numKids = entry.getValue();
+            final int numKids = entry.getValue();
             int numEggs = eggCount.getOrDefault(parent, 0);
             if (numKids > 0) {
                 int newEggCount = numEggs + numKids / 2;
@@ -212,8 +214,8 @@ public class EggThemAll {
      */
     public void getResourceCount(final String user, final StringBuilder messageToSend) {
         final String userFmt = EggUtils.bold(user);
-        int numEggs = eggCount.getOrDefault(user, 0);
-        int numKids = kidCount.getOrDefault(user, 0);
+        final int numEggs = eggCount.getOrDefault(user, 0);
+        final int numKids = kidCount.getOrDefault(user, 0);
         messageToSend.append(userFmt)
             .append(", you have ")
             .append(numEggs)
@@ -222,6 +224,9 @@ public class EggThemAll {
             .append(" kids!");
     }
 
+    public void updateResources() {
+        eggTimer.updateResoures(eggCount);
+    }
     /*
         For every resource, list the top 5 users with the highest count.
      */

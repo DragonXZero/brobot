@@ -149,6 +149,8 @@ public class MessageListenerExample extends ListenerAdapter
 
         List<Member> members = message.getMentionedMembers();
         if (members != null && members.size() == 1) {
+            eggThemAll.updateResources();
+
             Member mentionedUser = members.get(0);
             String mentionedUsersName = mentionedUser.getUser().getName();
             String attacker = author.getName();
@@ -166,6 +168,8 @@ public class MessageListenerExample extends ListenerAdapter
                 eggThemAll.giveKids(attacker, defender, msgBldr, msg);
             }
         } else {
+            eggThemAll.updateResources();
+
             if (msg.toLowerCase().contains("brobot who likes")) {
                 EggUtils.reverseLookup(channel, msg);
             } else if (msg.toLowerCase().contains("fertilize")) {

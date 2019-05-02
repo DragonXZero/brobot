@@ -14,7 +14,7 @@ public class EggUtils {
     }
 
     public static void tickle(final String user, final StringBuilder messageToSend) {
-        messageToSend.append("Did someone say tickle??? You tickle **")
+        messageToSend.append("Did someone say tickle??? You tickle")
             .append(bold(user))
             .append("until they poo their pants a little bit. You regret it.");
     }
