@@ -179,6 +179,8 @@ public class MessageListenerExample extends ListenerAdapter
             }
         }
 
-        channel.sendMessage(msgBldr.toString());
+        if (msgBldr.length() > 0) {
+            channel.sendMessage(msgBldr.toString()).queue();
+        }
     }
 }
