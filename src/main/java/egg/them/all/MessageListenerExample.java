@@ -150,7 +150,7 @@ public class MessageListenerExample extends ListenerAdapter
             String name = member.getUser().getName();
             if (name.equals("brobot")) {
                 try {
-                    MarkovChain markovChain = new MarkovChain();
+                    MarkovChainGenerator markovChain = new MarkovChainGenerator();
                     String messageToSend = markovChain.markov("/Users/john.vento/Desktop/JDA-master/src/examples/dictionaries/common_phrases", 2, 7);
                     String cleanString = messageToSend.replaceAll("\\r\\n|\\r|\\n", " ");
                     String output = cleanString.trim().substring(0, 1).toUpperCase() + cleanString.substring(2) + ".";
