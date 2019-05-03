@@ -149,6 +149,7 @@ public class MessageListenerExample extends ListenerAdapter
 
         List<Member> members = message.getMentionedMembers();
         if (members != null && members.size() == 1) {
+            // Here are user-specific commands
             eggThemAll.updateResources();
 
             Member mentionedUser = members.get(0);
@@ -168,6 +169,7 @@ public class MessageListenerExample extends ListenerAdapter
                 eggThemAll.giveKids(attacker, defender, msgBldr, msg);
             }
         } else {
+            // Here are global commands that affects all uses participating in the game
             eggThemAll.updateResources();
 
             if (msg.toLowerCase().contains("brobot who likes")) {
