@@ -1,9 +1,8 @@
 package egg.them.all.eggs;
 
-import egg.them.all.children.*;
+import egg.them.all.kids.*;
 
 public abstract class Egg
 {
-    //Will return a child.
-    public abstract Child hatch();
+    public abstract Kid hatch();
 }
