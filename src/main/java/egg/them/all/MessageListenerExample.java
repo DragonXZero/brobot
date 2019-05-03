@@ -180,6 +180,11 @@ public class MessageListenerExample extends ListenerAdapter
                 eggThemAll.eatCake(msgBldr);
             } else if (msg.toLowerCase().contains("count my eggs")) {
                 eggThemAll.getResourceCount(authorsName, msgBldr);
+            } else if (msg.toLowerCase().contains("eggboard")) {
+                List<StringBuilder> bldrs = eggThemAll.displayLeaderBoard();
+                for (StringBuilder bldr : bldrs) {
+                    channel.sendMessage(bldr.toString()).queue();
+                }
             }
         }
 

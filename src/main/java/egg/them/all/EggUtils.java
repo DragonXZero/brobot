@@ -5,7 +5,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 public class EggUtils {
 
@@ -70,5 +70,27 @@ public class EggUtils {
                 }
             }
         }
+    }
+
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortValuesAsc(Map<K, V> map) {
+        List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
+        list.sort(Map.Entry.comparingByValue());
+
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Map.Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+
+        return result;
+    }
+
+    public static LinkedHashMap<String, Long> sortValuesDesc(Map<String, Long> unSortedMap) {
+        LinkedHashMap<String, Long> reverseSortedMap = new LinkedHashMap<>();
+        //Use Comparator.reverseOrder() for reverse ordering
+        unSortedMap.entrySet()
+            .stream()
+            .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+            .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
+        return reverseSortedMap;
     }
 }
