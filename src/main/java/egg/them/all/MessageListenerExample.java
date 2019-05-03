@@ -169,7 +169,7 @@ public class MessageListenerExample extends ListenerAdapter
                 eggThemAll.giveKids(attacker, defender, msgBldr, msg);
             }
         } else {
-            // Here are global commands that affects all uses participating in the game
+            // Here are global commands that affects all users participating in the game
             eggThemAll.updateResources();
 
             if (msg.toLowerCase().contains("brobot who likes")) {
