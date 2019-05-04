@@ -1,6 +1,6 @@
-package egg.them.all.eggs;
+package brobot.eggthemall.eggs;
 
-import egg.them.all.kids.*;
+import brobot.eggthemall.kids.*;
 
 //This is currently an example egg class
 public class DarkEgg extends Egg

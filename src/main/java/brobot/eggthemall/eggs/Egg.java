@@ -1,6 +1,6 @@
-package egg.them.all.eggs;
+package brobot.eggthemall.eggs;
 
-import egg.them.all.kids.*;
+import brobot.eggthemall.kids.*;
 
 public abstract class Egg
 {
