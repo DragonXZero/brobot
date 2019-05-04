@@ -42,7 +42,7 @@ public class MessageListenerExample extends ListenerAdapter
         // we would use AccountType.CLIENT
         try
         {
-            JDA jda = new JDABuilder("NTcyODkzMTIxOTY5NjUxNzI0.XMjA3A.BehNp-Tdc7CLh9V058zQHfHwA6I")         // The token of the account that is logging in.
+            JDA jda = new JDABuilder("<Replace_With_Valid_Token")         // The token of the account that is logging in.
                     .addEventListener(new MessageListenerExample())  // An instance of a class that will handle events.
                     .build();
             jda.awaitReady(); // Blocking guarantees that JDA will be completely loaded.
