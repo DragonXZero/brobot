@@ -1,4 +1,4 @@
-package egg.them.all;
+package brobot.mudae;
 
 public class LikeListItem {
     private final String show;

@@ -1,4 +1,4 @@
-package egg.them.all;
+package brobot.eggthemall;
 
 public class EggConstants {
     public static final Long EGG_OVULATION_COUNT = 100l;

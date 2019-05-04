@@ -1,4 +1,4 @@
-package egg.them.all;/*
+package brobot;/*
  *     Copyright 2015-2018 Austin Keener & Michael Ritter & Florian Spieß
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,9 @@ package egg.them.all;/*
  * limitations under the License.
  */
 
+import brobot.eggthemall.EggThemAll;
+import brobot.eggthemall.EggUtils;
+import brobot.mudae.ReverseLikeListLookup;
 import net.dv8tion.jda.client.entities.Group;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -22,11 +25,9 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
-import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
-public class MessageListenerExample extends ListenerAdapter
+public class BrobotListener extends ListenerAdapter
 {
     private static EggThemAll eggThemAll;
     private static ReverseLikeListLookup rev;
@@ -42,8 +43,8 @@ public class MessageListenerExample extends ListenerAdapter
         // we would use AccountType.CLIENT
         try
         {
-            JDA jda = new JDABuilder("<Replace_With_Valid_Token")         // The token of the account that is logging in.
-                    .addEventListener(new MessageListenerExample())  // An instance of a class that will handle events.
+            JDA jda = new JDABuilder("<Replace_With_Valid_Token>")         // The token of the account that is logging in.
+                    .addEventListener(new BrobotListener())  // An instance of a class that will handle events.
                     .build();
             jda.awaitReady(); // Blocking guarantees that JDA will be completely loaded.
             System.out.println("Finished Building JDA!");
@@ -160,7 +161,7 @@ public class MessageListenerExample extends ListenerAdapter
             if (mentionedUsersName.equals("brobot")) {
                 EggUtils.markov(channel, msgBldr);
             } else if (msg.toLowerCase().contains("tickle")) {
-                EggUtils.tickle(mentionedUsersName, msgBldr);
+                BrobotUtils.tickle(mentionedUsersName, msgBldr);
             } else if (msg.toLowerCase().contains("give eggs")) {
                 eggThemAll.ovulate(mentionedUsersName, msgBldr);
             } else if (msg.toLowerCase().contains("steal eggs")) {
