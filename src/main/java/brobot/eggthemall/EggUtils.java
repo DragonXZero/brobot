@@ -1,5 +1,7 @@
-package egg.them.all;
+package brobot.eggthemall;
 
+import brobot.markov.MarkovChainGenerator;
+import brobot.mudae.ReverseLikeListLookup;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -11,12 +13,6 @@ public class EggUtils {
 
     public static String bold(final String s) {
         return "**" + s + "**";
-    }
-
-    public static void tickle(final String user, final StringBuilder messageToSend) {
-        messageToSend.append("Did someone say tickle??? You tickle")
-            .append(bold(user))
-            .append("until they poo their pants a little bit. You regret it.");
     }
 
     public static void markov(final MessageChannel channel, final StringBuilder msgBuilder) {

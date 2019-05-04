@@ -1,4 +1,4 @@
-package egg.them.all;/*
+package brobot;/*
  *     Copyright 2015-2018 Austin Keener & Michael Ritter & Florian Spieß
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,7 @@ package egg.them.all;/*
  * limitations under the License.
  */
 
+import brobot.eggthemall.EggThemAll;
 import net.dv8tion.jda.client.entities.Group;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -22,17 +23,11 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
-public class MessageListenerExample extends ListenerAdapter
+public class BrobotListener extends ListenerAdapter
 {
+    private static BrobotMessageParser messageParser;
     private static EggThemAll eggThemAll;
-    private static ReverseLikeListLookup rev;
-    private static Map<String, Integer> eggCount;
-    private static Map<String, Integer> kidCount;
-
     /**
      * This is the method where the program starts.
      */
@@ -42,18 +37,14 @@ public class MessageListenerExample extends ListenerAdapter
         // we would use AccountType.CLIENT
         try
         {
-            JDA jda = new JDABuilder("NTcyODkzMTIxOTY5NjUxNzI0.XMjA3A.BehNp-Tdc7CLh9V058zQHfHwA6I")         // The token of the account that is logging in.
-                    .addEventListener(new MessageListenerExample())  // An instance of a class that will handle events.
+            JDA jda = new JDABuilder(BrobotConstants.DEVELOPER_TOKEN)         // The token of the account that is logging in.
+                    .addEventListener(new BrobotListener())  // An instance of a class that will handle events.
                     .build();
             jda.awaitReady(); // Blocking guarantees that JDA will be completely loaded.
             System.out.println("Finished Building JDA!");
 
-            rev = new ReverseLikeListLookup("/Users/john.vento/Desktop/JDA-master/src/examples/likelists.txt");
-            System.out.println("Finished Building Like Lists!");
-
+            messageParser = new BrobotMessageParser();
             eggThemAll = new EggThemAll();
-            eggCount = new HashMap<>();
-            kidCount = new HashMap<>();
         }
         catch (LoginException e)
         {
@@ -144,48 +135,9 @@ public class MessageListenerExample extends ListenerAdapter
             System.out.printf("[GRP: %s]<%s>: %s\n", groupName, author.getName(), msg);
         }
 
-        final StringBuilder msgBldr = new StringBuilder();
-        final String authorsName = author.getName();
-
-        List<Member> members = message.getMentionedMembers();
-        if (members != null && members.size() == 1) {
-            eggThemAll.updateResources();
-
-            Member mentionedUser = members.get(0);
-            String mentionedUsersName = mentionedUser.getUser().getName();
-            String attacker = author.getName();
-            String defender = mentionedUsersName;
-
-            if (mentionedUsersName.equals("brobot")) {
-                EggUtils.markov(channel, msgBldr);
-            } else if (msg.toLowerCase().contains("tickle")) {
-                EggUtils.tickle(mentionedUsersName, msgBldr);
-            } else if (msg.toLowerCase().contains("give eggs")) {
-                eggThemAll.ovulate(mentionedUsersName, msgBldr);
-            } else if (msg.toLowerCase().contains("steal eggs")) {
-                eggThemAll.stealEggs(attacker, defender, msgBldr);
-            } else if (msg.toLowerCase().contains("give kids")) {
-                eggThemAll.giveKids(attacker, defender, msgBldr, msg);
-            }
-        } else {
-            eggThemAll.updateResources();
-
-            if (msg.toLowerCase().contains("brobot who likes")) {
-                EggUtils.reverseLookup(channel, msg);
-            } else if (msg.toLowerCase().contains("fertilize")) {
-                eggThemAll.fertilize(authorsName, msgBldr, msg);
-            } else if (msg.toLowerCase().contains("copulate")) {
-                eggThemAll.copulate(authorsName, msgBldr);
-            } else if (msg.toLowerCase().contains("let them eat cake")) {
-                eggThemAll.eatCake(msgBldr);
-            } else if (msg.toLowerCase().contains("count my eggs")) {
-                eggThemAll.getResourceCount(authorsName, msgBldr);
-            } else if (msg.toLowerCase().contains("eggboard")) {
-                List<StringBuilder> bldrs = eggThemAll.displayLeaderBoard();
-                for (StringBuilder bldr : bldrs) {
-                    channel.sendMessage(bldr.toString()).queue();
-                }
-            }
+        StringBuilder msgBldr = new StringBuilder();
+        if (!BrobotUtils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
+            msgBldr = messageParser.parseMessage(message);
         }
 
         if (msgBldr.length() > 0) {

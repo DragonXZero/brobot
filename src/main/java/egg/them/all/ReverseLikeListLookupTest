@@ -1,8 +1,0 @@
-package egg.them.all;
-
-public class ReverseLikeListLookupTest {
-    public static void main(String[] args) {
-        System.out.println("Hello World");
-        ReverseLikeListLookup rev = new ReverseLikeListLookup("/Users/john.vento/Desktop/JDA-master/src/examples/likelists.txt");
-    }
-}

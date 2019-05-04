@@ -1,4 +1,4 @@
-package egg.them.all;
+package brobot.markov;
 
 import java.io.IOException;
 import java.nio.file.Files;
