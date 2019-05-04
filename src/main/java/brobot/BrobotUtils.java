@@ -9,4 +9,8 @@ public class BrobotUtils {
             .append(EggUtils.bold(user))
             .append("until they poo their pants a little bit. You regret it.");
     }
+
+    public static boolean isNullOrEmpty(String s) {
+        return s == null ? true : s.isEmpty();
+    }
 }
