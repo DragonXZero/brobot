@@ -21,7 +21,7 @@ public class EggCommandHandlerImpl implements CommandHandler {
 
         List<Member> members = brobotCommand.getMentionedUsers();
         if (members != null && members.size() == 1) {
-            // Here are user-specific commands
+            // Commands that require a mentioned user
             eggThemAll.updateResources();
 
             Member mentionedUser = members.get(0);
@@ -42,7 +42,7 @@ public class EggCommandHandlerImpl implements CommandHandler {
                 eggThemAll.giveKids(attacker, defender, response, msg);
             }
         } else {
-            // Here are global commands that affects all users participating in the game
+            // Commands that do not require a mentioned user, these might be global
             eggThemAll.updateResources();
 
             if (msg.toLowerCase().contains("brobot who likes")) {
@@ -62,6 +62,8 @@ public class EggCommandHandlerImpl implements CommandHandler {
 //                for (StringBuilder bldr : bldrs) {
 //                    channel.sendMessage(bldr.toString()).queue();
 //                }
+            } else if (msg.toLowerCase().contains("castle")) {
+                eggThemAll.displayCastleInfo(authorsName, response);
             }
         }
     }

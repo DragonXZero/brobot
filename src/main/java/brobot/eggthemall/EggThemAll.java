@@ -1,5 +1,9 @@
 package brobot.eggthemall;
 
+import brobot.BrobotConstants;
+import brobot.eggthemall.castle.Castle;
+import net.dv8tion.jda.core.entities.User;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,9 +11,13 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EggThemAll {
+    // TODO - Move these into the players respective castles
     private static final Map<String, Map<String, Long>> resourceCounts = new HashMap<>();
     private static final Map<String, Long> eggCount = new HashMap<>();
     private static final Map<String, Long> kidCount = new HashMap<>();
+
+    // TODO - Convert the key to a User object
+    private static final Map<String, Castle> castles = new HashMap<>();
 
     private final EggTimer eggTimer;
 
@@ -27,6 +35,7 @@ public class EggThemAll {
             messageToSend.append("I already gave you eggs, go away!!!");
         } else {
             eggCount.put(user, EggConstants.EGG_OVULATION_COUNT);
+            castles.put(user, new Castle(user));
             messageToSend.append(EggUtils.bold(user)).append(", you now have 100 eggs.");
         }
     }
@@ -235,6 +244,7 @@ public class EggThemAll {
     public void updateResources() {
         eggTimer.updateResoures(eggCount);
     }
+
     /*
         For every resource, list the top 5 users with the highest count.
      */
@@ -262,15 +272,16 @@ public class EggThemAll {
         }
 
         return bldrs;
-//    private void displayLeaderBoard() {
-//        StringBuilder bldr = new StringBuilder();
-//
-//
-//        Map<String, Integer> leaders = new LinkedHashMap<>();
-//        eggCount.entrySet().stream()
-//            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-//            .forEachOrdered(x -> leaders.put(x.getKey(), x.getValue()));
-//    }
+    }
+
+    /*
+        Return information about a users own castle
+     */
+    public void displayCastleInfo(final String userName, final StringBuilder messageToSend) {
+        final Castle castle = castles.get(userName);
+        messageToSend.append(castle.getCastleName())
+                .append("\n")
+                .append(BrobotConstants.SEPARATOR);
     }
 
 }
