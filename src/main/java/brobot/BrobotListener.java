@@ -23,6 +23,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
+import java.io.File;
 
 public class BrobotListener extends ListenerAdapter
 {
@@ -135,13 +136,18 @@ public class BrobotListener extends ListenerAdapter
             System.out.printf("[GRP: %s]<%s>: %s\n", groupName, author.getName(), msg);
         }
 
-        StringBuilder msgBldr = new StringBuilder();
+        final ResponseObject responseObject = new ResponseObject();
+
         if (!BrobotUtils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
-            msgBldr = messageParser.parseMessage(message);
+            messageParser.parseMessage(responseObject, message);
         }
 
-        if (msgBldr.length() > 0) {
-            channel.sendMessage(msgBldr.toString()).queue();
+        final StringBuilder responseBldr = responseObject.getResponseBldr();
+        if (responseBldr.length() > 0) {
+            channel.sendMessage(responseBldr.toString()).queue();
+            for (String filePath : responseObject.getImages()) {
+                channel.sendFile(new File(filePath)).queue();
+            }
         }
     }
 }

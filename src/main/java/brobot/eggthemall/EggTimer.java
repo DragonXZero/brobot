@@ -19,7 +19,7 @@ public class EggTimer {
     }
 
     /*
-        Gives all participants of EggTimer some amount of eggs. The exact calculation is pending.
+        Gives all participants of EggThemAll some amount of eggs. The exact calculation is pending.
     */
     public void updateResoures(final Map<User, Castle> castles) {
         final long currentTime = System.currentTimeMillis();

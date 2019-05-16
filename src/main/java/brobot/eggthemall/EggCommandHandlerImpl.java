@@ -3,6 +3,7 @@ package brobot.eggthemall;
 import brobot.BrobotCommand;
 import brobot.CommandHandler;
 import brobot.BrobotUtils;
+import brobot.ResponseObject;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 
@@ -15,9 +16,10 @@ public class EggCommandHandlerImpl implements CommandHandler {
         eggThemAll = new EggThemAll();
     }
 
-    public void executeCommand(final BrobotCommand brobotCommand, final StringBuilder response) {
+    public void executeCommand(final BrobotCommand brobotCommand, final ResponseObject responseObject) {
         eggThemAll.updateResources();
 
+        final StringBuilder response = responseObject.getResponseBldr();
         final User attacker = brobotCommand.getAuthor();
         final String rawCommand = brobotCommand.getRawCommand();
         final List<Member> members = brobotCommand.getMentionedUsers();
@@ -56,8 +58,10 @@ public class EggCommandHandlerImpl implements CommandHandler {
 //                for (StringBuilder bldr : bldrs) {
 //                    channel.sendMessage(bldr.toString()).queue();
 //                }
-            } else if (rawCommand.toLowerCase().contains(EggConstants.CMD_DISPLAY_CASTLE_INFO)) {
+            } else if (rawCommand.contains(EggConstants.CMD_DISPLAY_CASTLE_INFO)) {
                 eggThemAll.displayCastleInfo(attacker, response);
+            } else if (rawCommand.contains(EggConstants.CMD_GENERATE_RANDOM_ENCOUNTER)) {
+                eggThemAll.generateRandomEncounter(responseObject);
             }
         }
     }

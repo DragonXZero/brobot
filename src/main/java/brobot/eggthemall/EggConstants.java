@@ -22,6 +22,7 @@ public class EggConstants {
 
     /* misc commands TODO - Might want to pull these out and put them into BrobotConstants */
     public static final String CMD_TICKLE = "tickle";
+    public static final String CMD_GENERATE_RANDOM_ENCOUNTER = "explore";
 
     /* resource constants */
     public static final String RESOURCE_EGGS = "eggs";

@@ -1,8 +1,12 @@
 package brobot.eggthemall;
 
+import brobot.ResponseObject;
 import brobot.eggthemall.building.Hatchery;
 import brobot.eggthemall.castle.Castle;
 import brobot.eggthemall.egg.EggType;
+import brobot.eggthemall.encounter.Encounter;
+import brobot.eggthemall.encounter.RandomEncounterGenerator;
+import brobot.eggthemall.encounter.monster.Monster;
 import brobot.eggthemall.kid.KidType;
 import net.dv8tion.jda.core.entities.User;
 
@@ -12,9 +16,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EggThemAll {
     private final Map<User, Castle> castles = new HashMap<>();
     private final EggTimer eggTimer;
+    private final RandomEncounterGenerator randomEncounterGenerator;
 
     public EggThemAll() {
         eggTimer = new EggTimer(EggConstants.EGG_TIMER_UPDATE_FREQUENCY, EggConstants.EGG_TIMER_BLESSING_INCREMENT);
+        randomEncounterGenerator = new RandomEncounterGenerator();
     }
 
     /* TODO - Need a more elegant way of doing this. Maybe we can pull castle initialization outside of EggThemAll. */
@@ -268,6 +274,16 @@ public class EggThemAll {
 
     public void updateResources() {
         eggTimer.updateResoures(castles);
+    }
+
+    public void generateRandomEncounter(final ResponseObject responseObject) {
+        final Encounter encounter = randomEncounterGenerator.generateRandomEncounter();
+        final Monster monster = encounter.getMonster();
+
+        final String encounterMessage = "A wild **" + monster.getName() + "** has appeared!\n" + monster.toString();
+        responseObject.addMessage(encounterMessage);
+        responseObject.addMessage("What will you do?\n\t**1.** Attempt to seduce. \n\t**2.** Unzip. \n\t**3. **Admire.\n");
+        responseObject.addImage("/Users/john.vento/Desktop/Discord/brobot/src/main/java/brobot/eggthemall/encounter/monster/images/goblin.png");
     }
 
     /*
