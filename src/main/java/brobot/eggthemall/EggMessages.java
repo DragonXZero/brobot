@@ -1,10 +1,5 @@
 package brobot.eggthemall;
 
-import brobot.eggthemall.egg.EggType;
-
-/*
-    TODO - This is kind of a hacky way of constructing messages. Find a more elegant solution.
- */
 public class EggMessages {
     public static final String UNDER_CONSTRUCTION = "This is broken right now D: Please try again later!";
     public static final String INVALID_COMMAND = "What are you trying to do here? o_o??";
@@ -27,7 +22,7 @@ public class EggMessages {
     public static final String COPULATE_SUCCESS = "Congratulations **%s**! Some of your kids laid eggs! You now have %d eggs!!! :D\n";
 
     public static final String THANOS_ENOUGH_EGGS = "**%s**, your kids ate %d of your eggs! Those bastards! D: You now have %d eggs\n";
-    public static final String THANOS_NOT_ENOUGH_EGGS = "**%s**, you didn't have enough eggs to feed all of your kids... %d ran away! You now have %d kids and %d eggs. :(";
+    public static final String THANOS_NOT_ENOUGH_EGGS = "**%s**, you didn't have enough eggs to feed all of your kids... %d ran away! You now have %d kids and %d eggs. :(\n";
 
     public static final String RESOURCES_GET_SELF = "**%s**'s resources: %d kids and %d eggs!";
 }

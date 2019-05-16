@@ -3,6 +3,7 @@ package brobot.eggthemall;
 import brobot.BrobotConstants;
 import brobot.eggthemall.building.Hatchery;
 import brobot.eggthemall.castle.Castle;
+import brobot.eggthemall.egg.Egg;
 import brobot.eggthemall.egg.EggType;
 import brobot.eggthemall.kid.KidType;
 import net.dv8tion.jda.core.entities.User;
@@ -31,7 +32,11 @@ public class EggThemAll {
         Gives the mentioned user 100 eggs.
      */
     public void ovulate(final User user, final StringBuilder messageToSend) {
-        messageToSend.append(constructFormattedString(EggMessages.OVULATE_SUCCESS, user.getName()));
+        if (castles.containsKey(user)) {
+            messageToSend.append(constructFormattedString(EggMessages.OVULATE_FAIL));
+        } else {
+            messageToSend.append(constructFormattedString(EggMessages.OVULATE_SUCCESS, user.getName()));
+        }
     }
 
     /*
@@ -148,7 +153,8 @@ public class EggThemAll {
                 hatchery.updateKidCount(KidType.NORMAL, -numKidsLost);
                 hatchery.updateEggCount(EggType.BASIC, -hatchery.getEggCount(EggType.BASIC));
 
-                messageToSend.append(constructFormattedString(EggMessages.THANOS_NOT_ENOUGH_EGGS, castle.getNameOfOwner(), numKidsLost, numEggs));
+                messageToSend.append(constructFormattedString(EggMessages.THANOS_NOT_ENOUGH_EGGS, castle.getNameOfOwner(), numKidsLost,
+                        hatchery.getKidCount(KidType.NORMAL), hatchery.getEggCount(EggType.BASIC)));
             }
         }
     }
@@ -319,6 +325,9 @@ public class EggThemAll {
         eggTimer.updateResoures(castles);
     }
 
+    /*
+        TODO - This is kind of a hacky way of constructing messages. Find a more elegant solution.
+    */
     private String constructFormattedString(final String message, final Object... args) {
         return String.format(message, args);
     }
