@@ -1,9 +1,7 @@
 package brobot.eggthemall;
 
-import brobot.BrobotConstants;
 import brobot.eggthemall.building.Hatchery;
 import brobot.eggthemall.castle.Castle;
-import brobot.eggthemall.egg.Egg;
 import brobot.eggthemall.egg.EggType;
 import brobot.eggthemall.kid.KidType;
 import net.dv8tion.jda.core.entities.User;
@@ -226,97 +224,44 @@ public class EggThemAll {
         final Hatchery attackersHatchery = attackersCastle.getHatchery();
         final Hatchery defendersHatchery = defendersCastle.getHatchery();
 
-        final String attackerFmt = EggUtils.bold(attackersCastle.getNameOfOwner());
-        final String defenderFmt = EggUtils.bold(defendersCastle.getNameOfOwner());
-
         final long attackersAttackPower = attackersCastle.getAttackValue();
         final long defendersDefensePower = defendersCastle.getDefenseValue();
 
-        messageToSend.append("Your army clashes with ")
-                .append(defenderFmt)
-                .append("'s army in an epic battle!\n");
+        messageToSend.append(constructFormattedString(EggMessages.ATTACK_INTRO, attacker.getName(), defender.getName()));
 
-        Random rand = new Random();
+        final Random rand = new Random();
         final int kidsLost;
         final int kidsDefeated;
         final double powerGapRating = (double) (attackersAttackPower - defendersDefensePower) / (double) defendersDefensePower;
+        final double attackerUpperBoundLoss = attackersHatchery.getKidCount(KidType.NORMAL);
+        final double defenderUpperBoundLoss = defendersHatchery.getKidCount(KidType.NORMAL);
 
         if (Math.abs(powerGapRating) <= .1) {
-            kidsLost = rand.nextInt((int) (attackersHatchery.getKidCount(KidType.NORMAL) * .1));
-            kidsDefeated = rand.nextInt((int) (defendersHatchery.getKidCount(KidType.NORMAL) * .1));
-
-            messageToSend.append("Both sides are too evenly matched! You retreat before your army suffers unnecessary casualties!\n")
-                    .append("\tBattle Summary")
-                    .append("\n\t\t")
-                    .append(attackerFmt)
-                    .append("'s :baby:'s defeated in battle: ")
-                    .append(kidsLost)
-                    .append("\n\t\t")
-                    .append(defenderFmt)
-                    .append("'s :baby:'s defeated in battle: ")
-                    .append(kidsDefeated);
+            kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_DRAW) + 1);
+            kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_DRAW) + 1);
+            messageToSend.append(EggMessages.ATTACK_DRAW);
         } else if (powerGapRating > 0) {
             if (powerGapRating < .9) {
-                kidsLost = rand.nextInt((int) (attackersCastle.getHatchery().getKidCount(KidType.NORMAL) * .05));
-                kidsDefeated = rand.nextInt((int) (defendersCastle.getHatchery().getKidCount(KidType.NORMAL) * .2));
-
-                messageToSend.append("Your army easily overpowers the opposing force!\n")
-                        .append("\tBattle Summary")
-                        .append("\n\t\t")
-                        .append(attackerFmt)
-                        .append("'s :baby:'s defeated in battle: ")
-                        .append(kidsLost)
-                        .append("\n\t\t")
-                        .append(defenderFmt)
-                        .append("'s :baby:'s defeated in battle: ")
-                        .append(kidsDefeated);
+                kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER) + 1);
+                kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER) + 1);
+                messageToSend.append(constructFormattedString(EggMessages.ATTACK_VICTORY));
             } else {
-                kidsLost = rand.nextInt((int) (attackersCastle.getHatchery().getKidCount(KidType.NORMAL) * .01));
-                kidsDefeated = rand.nextInt((int) (defendersCastle.getHatchery().getKidCount(KidType.NORMAL) * .5));
-
-                messageToSend.append("Your army absolutely obliterates the enemy. You proceed to burn down their crops and obliterate their people from existence!\n")
-                        .append("\tBattle Summary")
-                        .append("\n\t\t")
-                        .append(attackerFmt)
-                        .append("'s :baby:'s defeated in battle: ")
-                        .append(kidsLost)
-                        .append("\n\t\t")
-                        .append(defenderFmt)
-                        .append("'s :baby:'s defeated in battle: ")
-                        .append(kidsDefeated);
+                kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER_OVERWHELMING) + 1);
+                kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER_OVERWHELMING) + 1);
+                messageToSend.append(constructFormattedString(EggMessages.ATTACK_VICTORY_OVERWHELMING));
             }
         } else {
             if (powerGapRating > -.9) {
-                kidsLost = rand.nextInt((int) (attackersCastle.getHatchery().getKidCount(KidType.NORMAL) * .2));
-                kidsDefeated = rand.nextInt((int) (defendersCastle.getHatchery().getKidCount(KidType.NORMAL) * .05));
-
-                messageToSend.append("Your army had no chance against the opposing force! Why did you even bother attacking?\n")
-                        .append("\tBattle Summary")
-                        .append("\n\t\t")
-                        .append(attackerFmt)
-                        .append("'s :baby:'s defeated in battle: ")
-                        .append(kidsLost)
-                        .append("\n\t\t")
-                        .append(defenderFmt)
-                        .append("'s :baby:'s defeated in battle: ")
-                        .append(kidsDefeated);
+                kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER) + 1);
+                kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER) + 1);
+                messageToSend.append(constructFormattedString(EggMessages.ATTACK_DEFEAT));
             } else {
-                kidsLost = rand.nextInt((int) (attackersCastle.getHatchery().getKidCount(KidType.NORMAL) * .5));
-                kidsDefeated = rand.nextInt((int) (defendersCastle.getHatchery().getKidCount(KidType.NORMAL) * .01));
-
-                messageToSend.append("You sent your poor kids into a 300 type scenario. They had no chance... Say hello to your new daddy ")
-                        .append(defenderFmt)
-                        .append(".\n\tBattle Summary")
-                        .append("\n\t\t")
-                        .append(attackerFmt)
-                        .append("'s :baby:'s defeated in battle: ")
-                        .append(kidsLost)
-                        .append("\n\t\t")
-                        .append(defenderFmt)
-                        .append("'s :baby:'s defeated in battle: ")
-                        .append(kidsDefeated);
+                kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER_OVERWHELMING) + 1);
+                kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER_OVERWHELMING) + 1);
+                messageToSend.append(constructFormattedString(EggMessages.ATTACK_DEFEAT_OVERWHELMING, defender.getName()));
             }
         }
+        messageToSend.append(constructFormattedString(EggMessages.ATTACK_BATTLE_SUMMARY, attacker.getName(), kidsLost, defender.getName(), kidsDefeated));
         attackersHatchery.updateKidCount(KidType.NORMAL, -kidsLost);
         defendersHatchery.updateKidCount(KidType.NORMAL, -kidsDefeated);
     }

@@ -38,6 +38,13 @@ public class EggConstants {
     public static int HATCHERY_BASIC_EGG_ROLL_RARE_THRESHOLD = 998;
     public static int HATCHERY_BASIC_EGG_ROLL_LEGENDARY_THRESHOLD = 999;
 
+    /* Combat related values */
+    public static double ATTACK_LOSS_MULTIPLIER_DRAW = .1;
+    public static double ATTACK_LOSS_MULTIPLIER_WINNER = .05;
+    public static double ATTACK_LOSS_MULTIPLIER_WINNER_OVERWHELMING = .02;
+    public static double ATTACK_LOSS_MULTIPLIER_LOSER = .2;
+    public static double ATTACK_LOSS_MULTIPLIER_LOSER_OVERWHELMING = .5;
+
     /* Misc values */
     public static final Long EGG_OVULATION_AMOUNT = 100l;
     public static final int EGG_STEAL_MIN = 2;

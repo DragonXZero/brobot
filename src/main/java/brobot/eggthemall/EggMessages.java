@@ -25,5 +25,17 @@ public class EggMessages {
     public static final String THANOS_NOT_ENOUGH_EGGS = "**%s**, you didn't have enough eggs to feed all of your kids... %d ran away! You now have %d kids and %d eggs. :(\n";
 
     public static final String RESOURCES_GET_SELF = "**%s**'s resources: %d kids and %d eggs!";
+
+    public static final String ATTACK_INTRO = "**%s**, your army clashes with **%s**'s army in an epic battle!\n";
+    public static final String ATTACK_DRAW = "Both sides are too evenly matched! You retreat before your army suffers unnecessary casualties!\n";
+    public static final String ATTACK_VICTORY = "Your army easily overpowers the opposing force!\n";
+    public static final String ATTACK_VICTORY_OVERWHELMING = "Your army absolutely obliterates the enemy! You proceed to burn down their crops and obliterate their people from existence!\n";
+    public static final String ATTACK_DEFEAT = "Your army had no chance against the opposing force! Why did you even bother attacking?\n";
+    public static final String ATTACK_DEFEAT_OVERWHELMING = "You sent your poor kids into a 300 type scenario! They had no chance... Say hello to your new daddy: **%s**.\n";
+
+    public static final String ATTACK_BATTLE_SUMMARY =
+            "\tBattle Summary:"
+            + "\n\t\t**%s**'s :baby:'s defeated in battle: %d"
+            + "\n\t\t**%s**'s :baby:'s defeated in battle: %d";
 }
 
