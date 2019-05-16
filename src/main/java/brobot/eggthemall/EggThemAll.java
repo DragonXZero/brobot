@@ -7,10 +7,7 @@ import brobot.eggthemall.egg.EggType;
 import brobot.eggthemall.kid.KidType;
 import net.dv8tion.jda.core.entities.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EggThemAll {
@@ -156,7 +153,7 @@ public class EggThemAll {
                     .append(attackerFmt)
                     .append(", you got rid of ")
                     .append(numKidsToGive)
-                    .append(" and gave them to ")
+                    .append(" kids and gave them to ")
                     .append(defenderFmt)
                     .append(". You now have ")
                     .append(attackersHatchery.getKidCount(KidType.NORMAL))
@@ -254,10 +251,6 @@ public class EggThemAll {
             .append(" kids!");
     }
 
-    public void updateResources() {
-        eggTimer.updateResoures(castles);
-    }
-
     /*
         For every resource, list the top 5 users with the highest count.
      */
@@ -297,10 +290,20 @@ public class EggThemAll {
         }
 
         final Castle castle = castles.get(user);
+        final Hatchery hatchery = castle.getHatchery();
 
         messageToSend.append(castle.getCastleName())
+//                .append("\t :heart: : 0")
+                .append("\t :crossed_swords: : ")
+                .append(castle.getAttackValue())
+                .append(" :shield: : ")
+                .append(castle.getDefenseValue())
                 .append("\n")
-                .append(BrobotConstants.SEPARATOR);
+                .append(BrobotConstants.SEPARATOR)
+                .append("\n\t:egg: : ")
+                .append(hatchery.getEggCount(EggType.BASIC))
+                .append("\n\t:baby: : ")
+                .append(hatchery.getKidCount(KidType.NORMAL));
     }
 
     /*
@@ -313,6 +316,124 @@ public class EggThemAll {
 
         final Castle castle = castles.get(user);
         final Hatchery hatchery = castle.getHatchery();
+    }
+
+    /*
+        TODO - This method implementation is just for the poc. Most of this code will be removed.
+     */
+    public void attack(final User attacker, final User defender, final StringBuilder messageToSend) {
+        if (!castles.containsKey(attacker)) {
+            initializeUsersCastle(attacker);
+        }
+
+        if (!castles.containsKey(defender)) {
+            initializeUsersCastle(defender);
+        }
+
+        final Castle attackersCastle = castles.get(attacker);
+        final Castle defendersCastle = castles.get(defender);
+
+        final Hatchery attackersHatchery = attackersCastle.getHatchery();
+        final Hatchery defendersHatchery = defendersCastle.getHatchery();
+
+        final String attackerFmt = EggUtils.bold(attackersCastle.getOwnerName());
+        final String defenderFmt = EggUtils.bold(defendersCastle.getOwnerName());
+
+        final long attackersAttackPower = attackersCastle.getAttackValue();
+        final long defendersDefensePower = defendersCastle.getDefenseValue();
+
+        messageToSend.append("Your army clashes with ")
+                .append(defenderFmt)
+                .append("'s army in an epic battle!\n");
+
+        Random rand = new Random();
+        final int kidsLost;
+        final int kidsDefeated;
+
+        final double powerGapRating = (double) (attackersAttackPower - defendersDefensePower) / (double) defendersDefensePower;
+        if (Math.abs(powerGapRating) <= .1) {
+            kidsLost = rand.nextInt((int) (attackersHatchery.getKidCount(KidType.NORMAL) * .1));
+            kidsDefeated = rand.nextInt((int) (defendersHatchery.getKidCount(KidType.NORMAL) * .1));
+
+            messageToSend.append("Both sides are too evenly matched! You retreat before your army suffers unnecessary casualties!\n")
+                    .append("\tBattle Summary")
+                    .append("\n\t\t")
+                    .append(attackerFmt)
+                    .append("'s :baby:'s defeated in battle: ")
+                    .append(kidsLost)
+                    .append("\n\t\t")
+                    .append(defenderFmt)
+                    .append("'s :baby:'s defeated in battle: ")
+                    .append(kidsDefeated);
+        } else if (powerGapRating > 0) {
+            if (powerGapRating < .9) {
+                kidsLost = rand.nextInt((int) (attackersCastle.getHatchery().getKidCount(KidType.NORMAL) * .05));
+                kidsDefeated = rand.nextInt((int) (defendersCastle.getHatchery().getKidCount(KidType.NORMAL) * .2));
+
+                messageToSend.append("Your army easily overpowers the opposing force!\n")
+                        .append("\tBattle Summary")
+                        .append("\n\t\t")
+                        .append(attackerFmt)
+                        .append("'s :baby:'s defeated in battle: ")
+                        .append(kidsLost)
+                        .append("\n\t\t")
+                        .append(defenderFmt)
+                        .append("'s :baby:'s defeated in battle: ")
+                        .append(kidsDefeated);
+            } else {
+                kidsLost = rand.nextInt((int) (attackersCastle.getHatchery().getKidCount(KidType.NORMAL) * .01));
+                kidsDefeated = rand.nextInt((int) (defendersCastle.getHatchery().getKidCount(KidType.NORMAL) * .5));
+
+                messageToSend.append("Your army absolutely obliterates the enemy. You proceed to burn down their crops and obliterate their people from existence!\n")
+                        .append("\tBattle Summary")
+                        .append("\n\t\t")
+                        .append(attackerFmt)
+                        .append("'s :baby:'s defeated in battle: ")
+                        .append(kidsLost)
+                        .append("\n\t\t")
+                        .append(defenderFmt)
+                        .append("'s :baby:'s defeated in battle: ")
+                        .append(kidsDefeated);
+            }
+        } else {
+            if (powerGapRating > -.9) {
+                kidsLost = rand.nextInt((int) (attackersCastle.getHatchery().getKidCount(KidType.NORMAL) * .2));
+                kidsDefeated = rand.nextInt((int) (defendersCastle.getHatchery().getKidCount(KidType.NORMAL) * .05));
+
+                messageToSend.append("Your army had no chance against the opposing force! Why did you even bother attacking?\n")
+                        .append("\tBattle Summary")
+                        .append("\n\t\t")
+                        .append(attackerFmt)
+                        .append("'s :baby:'s defeated in battle: ")
+                        .append(kidsLost)
+                        .append("\n\t\t")
+                        .append(defenderFmt)
+                        .append("'s :baby:'s defeated in battle: ")
+                        .append(kidsDefeated);
+            } else {
+                kidsLost = rand.nextInt((int) (attackersCastle.getHatchery().getKidCount(KidType.NORMAL) * .5));
+                kidsDefeated = rand.nextInt((int) (defendersCastle.getHatchery().getKidCount(KidType.NORMAL) * .01));
+
+                messageToSend.append("You sent your poor kids into a 300 type scenario. They had no chance... Say hello to your new daddy ")
+                        .append(defenderFmt)
+                        .append(".\n\tBattle Summary")
+                        .append("\n\t\t")
+                        .append(attackerFmt)
+                        .append("'s :baby:'s defeated in battle: ")
+                        .append(kidsLost)
+                        .append("\n\t\t")
+                        .append(defenderFmt)
+                        .append("'s :baby:'s defeated in battle: ")
+                        .append(kidsDefeated);
+            }
+            attackersHatchery.updateKidCount(KidType.NORMAL, -kidsLost);
+            defendersHatchery.updateKidCount(KidType.NORMAL, -kidsDefeated);
+        }
+
+    }
+
+    public void updateResources() {
+        eggTimer.updateResoures(castles);
     }
 
 }

@@ -34,6 +34,8 @@ public class EggCommandHandlerImpl implements CommandHandler {
                 eggThemAll.stealEggs(attacker, defender, response);
             } else if (msg.toLowerCase().contains("give kids")) {
                 eggThemAll.giveKids(attacker, defender, response, msg);
+            } else if (msg.toLowerCase().contains("attack")) {
+                eggThemAll.attack(attacker, defender, response);
             }
         } else {
             // Commands that do not require a mentioned user, these might be global

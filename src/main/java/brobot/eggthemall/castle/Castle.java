@@ -1,6 +1,7 @@
 package brobot.eggthemall.castle;
 
 import brobot.eggthemall.building.Hatchery;
+import brobot.eggthemall.kid.KidType;
 import net.dv8tion.jda.core.entities.User;
 
 import java.util.HashMap;
@@ -34,5 +35,13 @@ public class Castle {
 
     public Hatchery getHatchery() {
         return this.hatchery;
+    }
+
+    public long getAttackValue() {
+        return hatchery.getKidCount(KidType.NORMAL);
+    }
+
+    public long getDefenseValue() {
+        return hatchery.getKidCount(KidType.NORMAL);
     }
 }
