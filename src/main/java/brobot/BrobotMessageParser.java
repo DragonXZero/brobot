@@ -21,19 +21,10 @@ public class BrobotMessageParser {
         final User author = discordMessage.getAuthor();
 
         final String[] parts = content.substring(1).split(" ");
-        final String commandType = parts[0];
-
         final List<String> commandParts = new ArrayList<>(Arrays.asList(parts));
-        commandParts.remove(0);
 
-        BrobotCommand command = new BrobotCommand(commandType, commandParts, discordMessage.getMentionedMembers(), author, content);
-        switch (command.getCommandType()) {
-            case "egg" :
-                eggCommandHandlerImpl.executeCommand(command, response);
-                break;
-            default :
-                response.append("This aint not no invalid command yo");
-        }
+        BrobotCommand command = new BrobotCommand(null, commandParts, discordMessage.getMentionedMembers(), author, content);
+        eggCommandHandlerImpl.executeCommand(command, response);
 
         return response;
     }

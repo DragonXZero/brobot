@@ -22,7 +22,7 @@ public class EggConstants {
     public static int HATCHERY_BASIC_EGG_ROLL_LEGENDARY_THRESHOLD = 999;
 
     /* Misc values */
-    public static final Long EGG_OVULATION_COUNT = 100l;
+    public static final Long EGG_OVULATION_AMOUNT = 100l;
     public static final int EGG_STEAL_MIN = 2;
     public static final int EGG_STEAL_MAX = 20;
 }

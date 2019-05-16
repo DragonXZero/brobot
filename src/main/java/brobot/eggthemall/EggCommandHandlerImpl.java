@@ -4,6 +4,7 @@ import brobot.BrobotCommand;
 import brobot.CommandHandler;
 import brobot.BrobotUtils;
 import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.User;
 
 import java.util.List;
 
@@ -15,27 +16,20 @@ public class EggCommandHandlerImpl implements CommandHandler {
     }
 
     public void executeCommand(final BrobotCommand brobotCommand, final StringBuilder response) {
-        final String authorsName = brobotCommand.getAuthor().getName();
-
-        String msg = brobotCommand.getRawCommand();
+        final User attacker = brobotCommand.getAuthor();
+        final String msg = brobotCommand.getRawCommand();
 
         List<Member> members = brobotCommand.getMentionedUsers();
         if (members != null && members.size() == 1) {
             // Commands that require a mentioned user
             eggThemAll.updateResources();
 
-            Member mentionedUser = members.get(0);
-            String mentionedUsersName = mentionedUser.getUser().getName();
-            String attacker = authorsName;
-            String defender = mentionedUsersName;
+            final User defender = members.get(0).getUser();
 
-            if (mentionedUsersName.equals("brobot")) {
-//                EggUtils.markov(channel, response);
-                response.append("This is broken right now D:");
-            } else if (msg.toLowerCase().contains("tickle")) {
-                BrobotUtils.tickle(mentionedUsersName, response);
+            if (msg.toLowerCase().contains("tickle")) {
+                BrobotUtils.tickle(defender, response);
             } else if (msg.toLowerCase().contains("give eggs")) {
-                eggThemAll.ovulate(mentionedUsersName, response);
+                eggThemAll.ovulate(defender, response);
             } else if (msg.toLowerCase().contains("steal eggs")) {
                 eggThemAll.stealEggs(attacker, defender, response);
             } else if (msg.toLowerCase().contains("give kids")) {
@@ -49,13 +43,13 @@ public class EggCommandHandlerImpl implements CommandHandler {
 //                EggUtils.reverseLookup(channel, msg);
                 response.append("This is broken right now D:");
             } else if (msg.toLowerCase().contains("fertilize")) {
-                eggThemAll.fertilize(authorsName, response, msg);
+                eggThemAll.fertilize(attacker, response, msg);
             } else if (msg.toLowerCase().contains("copulate")) {
-                eggThemAll.copulate(authorsName, response);
+                eggThemAll.copulate(attacker, response);
             } else if (msg.toLowerCase().contains("let them eat cake")) {
                 eggThemAll.eatCake(response);
             } else if (msg.toLowerCase().contains("count my eggs")) {
-                eggThemAll.getResourceCount(authorsName, response);
+                eggThemAll.getResourceCount(attacker, response);
             } else if (msg.toLowerCase().contains("eggboard")) {
                 response.append("This is broken right now D:");
 //                List<StringBuilder> bldrs = eggThemAll.displayLeaderBoard();
@@ -63,7 +57,7 @@ public class EggCommandHandlerImpl implements CommandHandler {
 //                    channel.sendMessage(bldr.toString()).queue();
 //                }
             } else if (msg.toLowerCase().contains("castle")) {
-                eggThemAll.displayCastleInfo(authorsName, response);
+                eggThemAll.displayCastleInfo(attacker, response);
             }
         }
     }
