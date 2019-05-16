@@ -23,7 +23,7 @@ public class BrobotMessageParser {
         final String[] parts = content.substring(1).split(" ");
         final List<String> commandParts = new ArrayList<>(Arrays.asList(parts));
 
-        BrobotCommand command = new BrobotCommand(null, commandParts, discordMessage.getMentionedMembers(), author, content);
+        BrobotCommand command = new BrobotCommand(null, commandParts, discordMessage.getMentionedMembers(), author, content.toLowerCase());
         eggCommandHandlerImpl.executeCommand(command, response);
 
         return response;

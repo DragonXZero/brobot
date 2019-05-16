@@ -1,10 +1,27 @@
 package brobot.eggthemall;
 
 public class EggConstants {
-
-    /* commands */
+    /* egg related commands */
     public static final String CMD_OVULATE = "ovulate";
-    public static final String CMD_GIVE_EGGS = "give eggs";
+    public static final String CMD_ENTER_GAME = "give";
+    public static final String CMD_STEAL_EGGS = "steal";
+    public static final String CMD_FERTILIZE_EGGS = "fertilize";
+    public static final String CMD_COPULATE = "copulate";
+    public static final String CMD_THANOS = "let them eat cake";
+
+    /* kid related commands */
+    public static final String CMD_GIVE_KIDS = "abandon";
+
+    /* castle related commands */
+    public static final String CMD_DISPLAY_CASTLE_INFO = "castle";
+    public static final String CMD_ATTACK = "attack";
+
+    /* resource related commands */
+    public static final String CMD_DISPLAY_RESOURCE_COUNT = "count";
+    public static final String CMD_DISPLAY_EGGBOARD = "eggboard";
+
+    /* misc commands TODO - Might want to pull these out and put them into BrobotConstants */
+    public static final String CMD_TICKLE = "tickle";
 
     /* resource constants */
     public static final String RESOURCE_EGGS = "eggs";

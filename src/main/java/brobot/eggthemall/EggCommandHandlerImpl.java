@@ -16,49 +16,45 @@ public class EggCommandHandlerImpl implements CommandHandler {
     }
 
     public void executeCommand(final BrobotCommand brobotCommand, final StringBuilder response) {
+        eggThemAll.updateResources();
+
         final User attacker = brobotCommand.getAuthor();
-        final String msg = brobotCommand.getRawCommand();
+        final String rawCommand = brobotCommand.getRawCommand();
+        final List<Member> members = brobotCommand.getMentionedUsers();
 
-        List<Member> members = brobotCommand.getMentionedUsers();
         if (members != null && members.size() == 1) {
-            // Commands that require a mentioned user
-            eggThemAll.updateResources();
-
+            // Commands that require a mentioned user referred to as the defender
             final User defender = members.get(0).getUser();
 
-            if (msg.toLowerCase().contains("tickle")) {
+            if (rawCommand.contains(EggConstants.CMD_TICKLE)) {
                 BrobotUtils.tickle(defender, response);
-            } else if (msg.toLowerCase().contains("give eggs")) {
+            } else if (rawCommand.contains(EggConstants.CMD_OVULATE)) {
                 eggThemAll.ovulate(defender, response);
-            } else if (msg.toLowerCase().contains("steal eggs")) {
+            } else if (rawCommand.contains(EggConstants.CMD_STEAL_EGGS)) {
                 eggThemAll.stealEggs(attacker, defender, response);
-            } else if (msg.toLowerCase().contains("give kids")) {
-                eggThemAll.giveKids(attacker, defender, response, msg);
-            } else if (msg.toLowerCase().contains("attack")) {
+            } else if (rawCommand.contains(EggConstants.CMD_GIVE_KIDS)) {
+                eggThemAll.giveKids(attacker, defender, response, rawCommand);
+            } else if (rawCommand.contains(EggConstants.CMD_ATTACK)) {
                 eggThemAll.attack(attacker, defender, response);
             }
         } else {
             // Commands that do not require a mentioned user, these might be global
-            eggThemAll.updateResources();
 
-            if (msg.toLowerCase().contains("brobot who likes")) {
-//                EggUtils.reverseLookup(channel, msg);
-                response.append("This is broken right now D:");
-            } else if (msg.toLowerCase().contains("fertilize")) {
-                eggThemAll.fertilize(attacker, response, msg);
-            } else if (msg.toLowerCase().contains("copulate")) {
+            if (rawCommand.contains(EggConstants.CMD_FERTILIZE_EGGS)) {
+                eggThemAll.fertilize(attacker, response, rawCommand);
+            } else if (rawCommand.contains(EggConstants.CMD_COPULATE)) {
                 eggThemAll.copulate(attacker, response);
-            } else if (msg.toLowerCase().contains("let them eat cake")) {
+            } else if (rawCommand.contains(EggConstants.CMD_THANOS)) {
                 eggThemAll.eatCake(response);
-            } else if (msg.toLowerCase().contains("count my eggs")) {
+            } else if (rawCommand.contains(EggConstants.CMD_DISPLAY_RESOURCE_COUNT)) {
                 eggThemAll.getResourceCount(attacker, response);
-            } else if (msg.toLowerCase().contains("eggboard")) {
-                response.append("This is broken right now D:");
+            } else if (rawCommand.contains(EggConstants.CMD_DISPLAY_EGGBOARD)) {
+                response.append(EggMessages.UNDER_CONSTRUCTION);
 //                List<StringBuilder> bldrs = eggThemAll.displayLeaderBoard();
 //                for (StringBuilder bldr : bldrs) {
 //                    channel.sendMessage(bldr.toString()).queue();
 //                }
-            } else if (msg.toLowerCase().contains("castle")) {
+            } else if (rawCommand.toLowerCase().contains(EggConstants.CMD_DISPLAY_CASTLE_INFO)) {
                 eggThemAll.displayCastleInfo(attacker, response);
             }
         }

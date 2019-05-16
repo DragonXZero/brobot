@@ -175,8 +175,8 @@ public class EggThemAll {
         for (final Castle castle : castles.values()) {
             final Hatchery hatchery = castle.getHatchery();
             final String ownerFmt = EggUtils.bold(castle.getOwnerName());
-
             final long numKids = hatchery.getKidCount(KidType.NORMAL);
+
             if (numKids == 0) {
                 messageToSend.append(ownerFmt)
                         .append(", you don't have any kids. o.o So sad, you'll probably die alone too.. lul\n");
@@ -349,8 +349,8 @@ public class EggThemAll {
         Random rand = new Random();
         final int kidsLost;
         final int kidsDefeated;
-
         final double powerGapRating = (double) (attackersAttackPower - defendersDefensePower) / (double) defendersDefensePower;
+
         if (Math.abs(powerGapRating) <= .1) {
             kidsLost = rand.nextInt((int) (attackersHatchery.getKidCount(KidType.NORMAL) * .1));
             kidsDefeated = rand.nextInt((int) (defendersHatchery.getKidCount(KidType.NORMAL) * .1));
