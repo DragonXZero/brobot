@@ -25,6 +25,7 @@ public class EggCommandHandlerImpl implements CommandHandler {
         if (members != null && members.size() == 1) {
             // Commands that require a mentioned user referred to as the defender
             final User defender = members.get(0).getUser();
+            eggThemAll.initializeCastleIfNotInitialized(attacker, defender);
 
             if (rawCommand.contains(EggConstants.CMD_TICKLE)) {
                 BrobotUtils.tickle(defender, response);
@@ -39,6 +40,7 @@ public class EggCommandHandlerImpl implements CommandHandler {
             }
         } else {
             // Commands that do not require a mentioned user, these might be global
+            eggThemAll.initializeCastleIfNotInitialized(attacker);
 
             if (rawCommand.contains(EggConstants.CMD_FERTILIZE_EGGS)) {
                 eggThemAll.fertilize(attacker, response, rawCommand);
@@ -47,7 +49,7 @@ public class EggCommandHandlerImpl implements CommandHandler {
             } else if (rawCommand.contains(EggConstants.CMD_THANOS)) {
                 eggThemAll.eatCake(response);
             } else if (rawCommand.contains(EggConstants.CMD_DISPLAY_RESOURCE_COUNT)) {
-                eggThemAll.getResourceCount(attacker, response);
+                eggThemAll.getResourceCounts(attacker, response);
             } else if (rawCommand.contains(EggConstants.CMD_DISPLAY_EGGBOARD)) {
                 response.append(EggMessages.UNDER_CONSTRUCTION);
 //                List<StringBuilder> bldrs = eggThemAll.displayLeaderBoard();
