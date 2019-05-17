@@ -43,5 +43,6 @@ public class EggMessages {
     public static final String ENCOUNTER_ATTACK_SUCCESS = "**%s**, you dealt %d damage to %s! %s has %d :heart: left!\n";
     public static final String ENCOUNTER_ATTACK_FAIL_NO_DAMAGE = "**%s**, your attack did no damage. You're so weak that the monster just ignores you... get swole.\n";
     public static final String ENCOUNTER_ATTACK_REWARD = "Congratulations **%s**, you've received %d eggs for helping to defeat **%s**.\n";
+    public static final String ENCOUNTER_FLEE_SUCCESS = "Damn **%s**, you a bitch tho.";
 }
 

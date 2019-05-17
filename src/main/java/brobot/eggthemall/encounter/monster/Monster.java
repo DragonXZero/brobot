@@ -2,11 +2,13 @@ package brobot.eggthemall.encounter.monster;
 
 import net.dv8tion.jda.core.entities.User;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Monster {
     private final String name;
+    private final String spritePath;
     private final long health;
     private final long attack;
     private final long defense;
@@ -16,8 +18,9 @@ public class Monster {
     private transient long currentHealth;
     private transient boolean alive;
 
-    public Monster(final String name, final long health, final long attack, final long defense, final long eggRewardAmount) {
+    public Monster(final String name, final String spritePath, final long health, final long attack, final long defense, final long eggRewardAmount) {
         this.name = name;
+        this.spritePath = spritePath;
         this.health = health;
         this.attack = attack;
         this.defense = defense;
@@ -30,6 +33,10 @@ public class Monster {
 
     public String getName() {
         return name;
+    }
+
+    public String getSpritePath() {
+        return spritePath;
     }
 
     public long getHealth() {

@@ -289,8 +289,8 @@ public class EggThemAll {
             final Monster monster = currentEncounter.getMonster();
             final String encounterMessage = "A wild **" + monster.getName() + "** has appeared!\n" + monster.toString();
             responseObject.addMessage(encounterMessage);
-            responseObject.addMessage("What will you do?\n\t**1.** Attempt to seduce. \n\t**2.** Unzip. \n\t**3. **Admire.\n");
-            responseObject.addImage("/Users/john.vento/Desktop/Discord/brobot/src/main/java/brobot/eggthemall/encounter/monster/images/goblin.png");
+            responseObject.addImage(monster.getSpritePath());
+//            responseObject.addMessage("What will you do?\n\t**1.** Attempt to seduce. \n\t**2.** Unzip. \n\t**3. **Admire.\n");
         }
     }
 
@@ -312,6 +312,11 @@ public class EggThemAll {
                 currentEncounter = null;
             }
         }
+    }
+
+    public void processEncounterFlee(final User user, final ResponseObject responseObject) {
+        currentEncounter = null;
+        responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.ENCOUNTER_FLEE_SUCCESS, user.getName()));
     }
 
 }

@@ -64,6 +64,8 @@ public class EggCommandHandlerImpl implements CommandHandler {
                 eggThemAll.generateRandomEncounter(responseObject);
             }  else if (rawCommand.contains(EggConstants.CMD_ENCOUNTER_ATTACK)) {
                 eggThemAll.processEncounterAttack(attacker, responseObject);
+            }  else if (rawCommand.contains(EggConstants.CMD_ENCOUNTER_FLEE)) {
+                eggThemAll.processEncounterFlee(attacker, responseObject);
             }
         }
     }
