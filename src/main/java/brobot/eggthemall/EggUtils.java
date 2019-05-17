@@ -2,7 +2,6 @@ package brobot.eggthemall;
 
 import brobot.markov.MarkovChainGenerator;
 import brobot.mudae.ReverseLikeListLookup;
-import com.sun.xml.internal.bind.v2.TODO;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
