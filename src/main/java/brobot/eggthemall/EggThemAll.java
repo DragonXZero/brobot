@@ -1,276 +1,279 @@
 package brobot.eggthemall;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import brobot.eggthemall.building.Hatchery;
+import brobot.eggthemall.castle.Castle;
+import brobot.eggthemall.egg.EggType;
+import brobot.eggthemall.kid.KidType;
+import net.dv8tion.jda.core.entities.User;
+
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EggThemAll {
-    private static final Map<String, Map<String, Long>> resourceCounts = new HashMap<>();
-    private static final Map<String, Long> eggCount = new HashMap<>();
-    private static final Map<String, Long> kidCount = new HashMap<>();
-
+    private final Map<User, Castle> castles = new HashMap<>();
     private final EggTimer eggTimer;
 
     public EggThemAll() {
-        resourceCounts.put(EggConstants.RESOURCE_EGGS, eggCount);
-        resourceCounts.put(EggConstants.RESOURCE_KIDS, kidCount);
         eggTimer = new EggTimer(EggConstants.EGG_TIMER_UPDATE_FREQUENCY, EggConstants.EGG_TIMER_BLESSING_INCREMENT);
     }
 
-    /*
-        Gives the requesting user 100 eggs.
-     */
-    public void ovulate(final String user, final StringBuilder messageToSend) {
-        if(eggCount.containsKey(user)) {
-            messageToSend.append("I already gave you eggs, go away!!!");
-        } else {
-            eggCount.put(user, EggConstants.EGG_OVULATION_COUNT);
-            messageToSend.append(EggUtils.bold(user)).append(", you now have 100 eggs.");
-        }
-    }
-
-    /*
-        Steals (1-20) eggs from the specified user.
-     */
-    public void stealEggs(final String attacker, final String defender, StringBuilder messageToSend) {
-        final String attackerFmt = EggUtils.bold(attacker);
-        final String defenderFmt = EggUtils.bold(defender);
-
-        if (attacker.equals(defender)) {
-            messageToSend.append("You can't steal from yourself dummy. HEY EVERYONE, ")
-                .append(attackerFmt)
-                .append(" IS A DUM DUM!!");
-        }
-        else if (!eggCount.containsKey(attacker)) {
-            messageToSend.append("You aren't part of the eggame. Ask me for some eggs.");
-        } else {
-            if (!eggCount.containsKey(defender)) {
-                messageToSend.append("This person isn't part of the eggame.");
-            } else {
-                Long attackerEggCount = eggCount.get(attacker);
-                Long defenderEggCount = eggCount.get(defender);
-
-                if (defenderEggCount == 0) {
-                    messageToSend.append("This person has no eggs. :( Nooooo, dōshite?????");
-                } else {
-                    int min = 1;
-                    int max = 20;
-                    Long eggsToSteal = ThreadLocalRandom.current().nextLong(min, max + 1);
-
-                    while (eggsToSteal > defenderEggCount) {
-                        eggsToSteal = ThreadLocalRandom.current().nextLong(min, 20 + 1);
-                    }
-
-                    attackerEggCount += eggsToSteal;
-                    defenderEggCount -= eggsToSteal;
-
-                    messageToSend.append(attackerFmt)
-                        .append(", you stole ")
-                        .append(eggsToSteal)
-                        .append(" eggs from ")
-                        .append(defenderFmt)
-                        .append(". You now have ")
-                        .append(attackerEggCount)
-                        .append(" eggs and they have ")
-                        .append(defenderEggCount)
-                        .append(" eggs.");
-                    eggCount.put(attacker, attackerEggCount);
-                    eggCount.put(defender, defenderEggCount);
-                }
+    /* TODO - Need a more elegant way of doing this. Maybe we can pull castle initialization outside of EggThemAll. */
+    public void initializeCastleIfNotInitialized(final User... users) {
+        for (User user : users) {
+            if (!castles.containsKey(user)) {
+                castles.put(user, new Castle(user));
             }
         }
     }
 
+    /*
+        Gives the mentioned user 100 eggs.
+     */
+    public void ovulate(final User user, final StringBuilder messageToSend) {
+        if (castles.containsKey(user)) {
+            messageToSend.append(constructFormattedString(EggMessages.OVULATE_FAIL));
+        } else {
+            messageToSend.append(constructFormattedString(EggMessages.OVULATE_SUCCESS, user.getName()));
+        }
+    }
+
+    /*
+        Steals (1-20) eggs from the mentioned user.
+     */
+    public void stealEggs(final User attacker, final User defender, final StringBuilder messageToSend) {
+        if (attacker.equals(defender)) {
+            messageToSend.append(constructFormattedString(EggMessages.STEAL_EGGS_FAIL_SELF, attacker.getName()));
+        } else {
+            final Hatchery attackersHatchery = castles.get(attacker).getHatchery();
+            final Hatchery defendersHatchery = castles.get(defender).getHatchery();
+            long defenderEggCount = defendersHatchery.getEggCount(EggType.BASIC);
+
+            if (defenderEggCount == 0) {
+                messageToSend.append(constructFormattedString(EggMessages.STEAL_EGGS_FAIL_NO_EGGS_TO_STEAL, defender.getName()));
+            } else {
+                // Keep generating a number until it is less than or equal to the defender's egg count
+                long eggsToSteal = ThreadLocalRandom.current().nextLong(EggConstants.EGG_STEAL_MIN, EggConstants.EGG_STEAL_MAX + 1);
+                while (eggsToSteal > defenderEggCount) {
+                    eggsToSteal = ThreadLocalRandom.current().nextLong(EggConstants.EGG_STEAL_MIN,
+                            defenderEggCount < EggConstants.EGG_STEAL_MAX ? defenderEggCount + 1 : EggConstants.EGG_STEAL_MAX + 1);
+                }
+
+                attackersHatchery.updateEggCount(EggType.BASIC, eggsToSteal);
+                defendersHatchery.updateEggCount(EggType.BASIC, -eggsToSteal);
+
+                messageToSend.append(constructFormattedString(EggMessages.STEAL_EGGS_SUCCESS, attacker.getName(), eggsToSteal, defender.getName(),
+                        attackersHatchery.getEggCount(EggType.BASIC), defendersHatchery.getEggCount(EggType.BASIC)));
+            }
+        }
+    }
 
     /*
         Fertilize the specified number of eggs and turn them into kids.
      */
-    public void fertilize(final String user, final StringBuilder messageToSend, final String msg) {
-        final String userFmt= EggUtils.bold(user);
-
-        final Long kidsToMake = Long.parseLong(msg.substring(msg.indexOf("[")+1, msg.indexOf("]")));
-        Long numEggs = eggCount.getOrDefault(user, 0l);
+    public void fertilize(final User user, final StringBuilder messageToSend, final String msg) {
+        final Hatchery hatchery = castles.get(user).getHatchery();
+        final long kidsToMake = Long.parseLong(msg.substring(msg.indexOf("[")+1, msg.indexOf("]")));
+        final long currentEggCount = hatchery.getEggCount(EggType.BASIC);
 
         if (kidsToMake < 0) {
-            messageToSend.append("What are you trying to do here? o_o??");
-        } else if (kidsToMake > numEggs) {
-            messageToSend.append("You don't have enough eggs :( Go steal some more!");
+            messageToSend.append(EggMessages.INVALID_COMMAND);
+        } else if (kidsToMake > currentEggCount) {
+            messageToSend.append(EggMessages.FERTILIZE_EGGS_FAIL_NOT_ENOUGH_EGGS);
         } else {
-            numEggs -= kidsToMake;
-            long numKids = kidCount.getOrDefault(user, 0l) + kidsToMake;
-            messageToSend.append("Congratulations ")
-                .append(userFmt)
-                .append(", you made ")
-                .append(kidsToMake)
-                .append(" kids! You now have ")
-                .append(numKids)
-                .append(" kids and ")
-                .append(numEggs)
-                .append(" eggs.");
-            kidCount.put(user, numKids);
-            eggCount.put(user, numEggs);
+            hatchery.updateKidCount(KidType.NORMAL, kidsToMake);
+            hatchery.updateEggCount(EggType.BASIC, -kidsToMake);
+
+            messageToSend.append(constructFormattedString(EggMessages.FERTILIZE_EGGS_SUCCESS, user.getName(), kidsToMake,
+                    hatchery.getKidCount(KidType.NORMAL), hatchery.getEggCount(EggType.BASIC)));
         }
     }
 
     /*
-        Gives kids to the specified user.
+        Gives an amount of kids to the mentioned user.
      */
-    public void giveKids(final String attacker, final String defender, final StringBuilder messageToSend, final String msg) {
-        final String attackerFmt = EggUtils.bold(attacker);
-        final String defenderFmt = EggUtils.bold(defender);
+    public void giveKids(final User attacker, final User defender, final StringBuilder messageToSend, final String msg) {
+        final Hatchery attackersHatchery = castles.get(attacker).getHatchery();
+        final Hatchery defendersHatchery = castles.get(defender).getHatchery();
 
         if (attacker.equals(defender)) {
-            messageToSend.append("They're already your kids!");
+            messageToSend.append(EggMessages.ABANDON_KIDS_FAIL_SELF);
         } else {
-            Long numKidsToGive = Long.parseLong(msg.substring(msg.indexOf("[")+1, msg.indexOf("]")));
-            Long attackerNumKids = kidCount.getOrDefault(attacker, 0l);
-            Long defenderNumKids = kidCount.getOrDefault(defender, 0l);
+            final long numKidsToGive = Long.parseLong(msg.substring(msg.indexOf("[")+1, msg.indexOf("]")));
+            final long attackerNumKids = attackersHatchery.getKidCount(KidType.NORMAL);
 
             if (numKidsToGive > attackerNumKids) {
-                messageToSend.append("You don't have enough kids to give away. :( Go make more! o:");
+                messageToSend.append(EggMessages.ABANDON_KIDS_FAIL_NOT_ENOUGH_KIDS_TO_ABANDON);
             } else {
-                attackerNumKids -= numKidsToGive;
-                defenderNumKids += numKidsToGive;
+                attackersHatchery.updateKidCount(KidType.NORMAL, -numKidsToGive);
+                defendersHatchery.updateKidCount(KidType.NORMAL, numKidsToGive);
 
-                messageToSend.append("Congratulations ")
-                    .append(attackerFmt)
-                    .append(", you got rid of ")
-                    .append(numKidsToGive)
-                    .append(" and gave them to ")
-                    .append(defenderFmt)
-                    .append(". You now have ")
-                    .append(attackerNumKids)
-                    .append(" kids and they have ")
-                    .append(defenderNumKids)
-                    .append(" kids.");
+                messageToSend.append(constructFormattedString(EggMessages.ABANDON_KIDS_SUCCESS, attacker.getName(), numKidsToGive, defender.getName(),
+                        attackersHatchery.getKidCount(KidType.NORMAL), defendersHatchery.getKidCount(KidType.NORMAL)));
             }
-            kidCount.put(attacker, attackerNumKids);
-            kidCount.put(defender, defenderNumKids);
         }
     }
 
     /*
-        All the users in the server who have kids gain kids/2 eggs.
+        All the users in the server who have kids gain a number of kids equal to (basic kid count/2).
      */
-    public void copulate(final String user, final StringBuilder messageToSend) {
-        if (!kidCount.containsKey(user)) {
-            kidCount.put(user, 0l);
-        }
-        for (Map.Entry<String, Long> entry : kidCount.entrySet()) {
-            final String parent = entry.getKey();
-            final String parentFmt = EggUtils.bold(parent);
+    public void copulate(final User user, final StringBuilder messageToSend) {
+        for (final Castle castle : castles.values()) {
+            final Hatchery hatchery = castle.getHatchery();
+            final long numKids = hatchery.getKidCount(KidType.NORMAL);
 
-            final Long numKids = entry.getValue();
-            Long numEggs = eggCount.getOrDefault(parent, 0l);
-            if (numKids > 0) {
-                Long newEggCount = numEggs + numKids / 2;
-                messageToSend.append("Congratulations ")
-                    .append(parentFmt)
-                    .append("! Some of your kids lay eggs!")
-                    .append(" You now have ")
-                    .append(newEggCount)
-                    .append(" eggs!! :D\n");
-                eggCount.put(parent, newEggCount);
+            if (numKids == 0) {
+                messageToSend.append(constructFormattedString(EggMessages.COPULATE_FAIL_NO_KIDS, castle.getNameOfOwner()));
             } else {
-                messageToSend.append(parentFmt)
-                    .append(", you don't have any kids. o.o So sad, you'll probably die alone too.. lul\n");
+                final long numEggsCreated = hatchery.getKidCount(KidType.NORMAL) / 2 + 1;
+                hatchery.updateEggCount(EggType.BASIC, numEggsCreated);
+
+                messageToSend.append(constructFormattedString(EggMessages.COPULATE_SUCCESS, castle.getNameOfOwner(), hatchery.getEggCount(EggType.BASIC)));
             }
         }
     }
 
     /*
-        All users kids eat their eggs. ???
+        All users kids eat eggs. Literally Thanos.
      */
     public void eatCake(final StringBuilder messageToSend) {
-        for (Map.Entry<String, Long> entry : kidCount.entrySet()) {
-            String parent = entry.getKey();
-            String parentFmt = EggUtils.bold(parent);
+        for (final Castle castle : castles.values()) {
+            final Hatchery hatchery = castle.getHatchery();
+            final long numEggs = hatchery.getEggCount(EggType.BASIC);
+            final long numKids = hatchery.getKidCount(KidType.NORMAL);
 
-            Long numKids = entry.getValue();
-            Long numEggs = eggCount.getOrDefault(parent, 0l);
+            if (numKids <= numEggs) {
+                hatchery.updateEggCount(EggType.BASIC, -numKids);
 
-            if (numKids > 0 && numKids <= numEggs) {
-                numEggs -= numKids;
-                messageToSend.append(parentFmt)
-                    .append(", your kids ate ")
-                    .append(numKids)
-                    .append(" of your eggs!! Those bastards!")
-                    .append(" You now have ")
-                    .append(numEggs)
-                    .append(" eggs.\n");
-                eggCount.put(parent, numEggs);
-            } else if (numKids > numEggs) {
-                long kidsGone = numKids - numEggs;
-                messageToSend.append(parentFmt)
-                    .append(", you didn't have enough eggs to feed your kids... ")
-                    .append(kidsGone)
-                    .append(" of your kids ran away. You now have ")
-                    .append(numEggs)
-                    .append(" kids and 0 eggs. :(\n");
-                kidCount.put(parent, numEggs);
-                eggCount.put(parent, 0l);
+                messageToSend.append(constructFormattedString(EggMessages.THANOS_ENOUGH_EGGS, castle.getNameOfOwner(), numKids,
+                        hatchery.getEggCount(EggType.BASIC)));
+            } else {
+                final long numKidsLost = numKids - numEggs;
+                hatchery.updateKidCount(KidType.NORMAL, -numKidsLost);
+                hatchery.updateEggCount(EggType.BASIC, -hatchery.getEggCount(EggType.BASIC));
+
+                messageToSend.append(constructFormattedString(EggMessages.THANOS_NOT_ENOUGH_EGGS, castle.getNameOfOwner(), numKidsLost,
+                        hatchery.getKidCount(KidType.NORMAL), hatchery.getEggCount(EggType.BASIC)));
             }
         }
     }
 
     /*
-        Displays the requesting users resources.
+        Displays the mentioned users resources.
             * eggs
             * kids
      */
-    public void getResourceCount(final String user, final StringBuilder messageToSend) {
-        final String userFmt = EggUtils.bold(user);
-        final Long numEggs = eggCount.getOrDefault(user, 0l);
-        final Long numKids = kidCount.getOrDefault(user, 0l);
-        messageToSend.append(userFmt)
-            .append(", you have ")
-            .append(numEggs)
-            .append(" eggs and ")
-            .append(numKids)
-            .append(" kids!");
+    public void getResourceCounts(final User user, final StringBuilder messageToSend) {
+        final Hatchery hatchery = castles.get(user).getHatchery();
+        messageToSend.append(constructFormattedString(EggMessages.RESOURCES_GET_SELF, user.getName(), hatchery.getKidCount(KidType.NORMAL),
+                hatchery.getEggCount(EggType.BASIC)));
     }
 
-    public void updateResources() {
-        eggTimer.updateResoures(eggCount);
-    }
     /*
         For every resource, list the top 5 users with the highest count.
      */
     public List<StringBuilder> displayLeaderBoard() {
-        List<StringBuilder> bldrs = new ArrayList<>();
-
-        for (Map.Entry<String, Map<String, Long>> resourceCount : resourceCounts.entrySet()) {
-            final String resourceName = resourceCount.getKey();
-            StringBuilder bldr = new StringBuilder(resourceName).append("\n");
-
-            int placement = 1;
-            Map<String, Long> sortedCounts = EggUtils.sortValuesDesc(resourceCount.getValue());
-            for (Map.Entry<String, Long> count : sortedCounts.entrySet()) {
-                bldr.append(placement++)
-                    .append(". ")
-                    .append(count.getKey())
-                    .append(" : " )
-                    .append(count.getValue())
-                    .append("\n");
-                if (placement > 5) {
-                    break;
-                }
-            }
-            bldrs.add(bldr);
-        }
-
-        return bldrs;
-//    private void displayLeaderBoard() {
-//        StringBuilder bldr = new StringBuilder();
+//        List<StringBuilder> bldrs = new ArrayList<>();
 //
+//        for (Map.Entry<String, Map<String, Long>> resourceCount : resourceCounts.entrySet()) {
+//            final String resourceName = resourceCount.getKey();
+//            StringBuilder bldr = new StringBuilder(resourceName).append("\n");
 //
-//        Map<String, Integer> leaders = new LinkedHashMap<>();
-//        eggCount.entrySet().stream()
-//            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-//            .forEachOrdered(x -> leaders.put(x.getKey(), x.getValue()));
-//    }
+//            int placement = 1;
+//            Map<String, Long> sortedCounts = EggUtils.sortValuesDesc(resourceCount.getValue());
+//            for (Map.Entry<String, Long> count : sortedCounts.entrySet()) {
+//                bldr.append(placement++)
+//                    .append(". ")
+//                    .append(count.getKey())
+//                    .append(" : " )
+//                    .append(count.getValue())
+//                    .append("\n");
+//                if (placement > 5) {
+//                    break;
+//                }
+//            }
+//            bldrs.add(bldr);
+//        }
+//
+//        return bldrs;
+        return null;
     }
 
+    /*
+        Returns information about a users own castle.
+     */
+    public void displayCastleInfo(final User user, final StringBuilder messageToSend) {
+        messageToSend.append(castles.get(user).toString());
+    }
+
+    /*
+        TODO - This method implementation is not complete.
+        Hatches eggs equal to the amount specified and return the results to the user.
+     */
+    public void hatchEggs(User user, final StringBuilder messageToSend, int numEggsToHatch) {
+        final Castle castle = castles.get(user);
+        final Hatchery hatchery = castle.getHatchery();
+    }
+
+    /*
+        TODO - This method implementation is just for the poc. Most of this code will be removed.
+     */
+    public void attack(final User attacker, final User defender, final StringBuilder messageToSend) {
+        final Castle attackersCastle = castles.get(attacker);
+        final Castle defendersCastle = castles.get(defender);
+
+        final Hatchery attackersHatchery = attackersCastle.getHatchery();
+        final Hatchery defendersHatchery = defendersCastle.getHatchery();
+
+        final long attackersAttackPower = attackersCastle.getAttackValue();
+        final long defendersDefensePower = defendersCastle.getDefenseValue();
+
+        messageToSend.append(constructFormattedString(EggMessages.ATTACK_INTRO, attacker.getName(), defender.getName()));
+
+        final Random rand = new Random();
+        final int kidsLost;
+        final int kidsDefeated;
+        final double powerGapRating = (double) (attackersAttackPower - defendersDefensePower) / (double) defendersDefensePower;
+        final double attackerUpperBoundLoss = attackersHatchery.getKidCount(KidType.NORMAL);
+        final double defenderUpperBoundLoss = defendersHatchery.getKidCount(KidType.NORMAL);
+
+        if (Math.abs(powerGapRating) <= .1) {
+            kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_DRAW) + 1);
+            kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_DRAW) + 1);
+            messageToSend.append(EggMessages.ATTACK_DRAW);
+        } else if (powerGapRating > 0) {
+            if (powerGapRating < .9) {
+                kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER) + 1);
+                kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER) + 1);
+                messageToSend.append(constructFormattedString(EggMessages.ATTACK_VICTORY));
+            } else {
+                kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER_OVERWHELMING) + 1);
+                kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER_OVERWHELMING) + 1);
+                messageToSend.append(constructFormattedString(EggMessages.ATTACK_VICTORY_OVERWHELMING));
+            }
+        } else {
+            if (powerGapRating > -.9) {
+                kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER) + 1);
+                kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER) + 1);
+                messageToSend.append(constructFormattedString(EggMessages.ATTACK_DEFEAT));
+            } else {
+                kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER_OVERWHELMING) + 1);
+                kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER_OVERWHELMING) + 1);
+                messageToSend.append(constructFormattedString(EggMessages.ATTACK_DEFEAT_OVERWHELMING, defender.getName()));
+            }
+        }
+        messageToSend.append(constructFormattedString(EggMessages.ATTACK_BATTLE_SUMMARY, attacker.getName(), kidsLost, defender.getName(), kidsDefeated));
+        attackersHatchery.updateKidCount(KidType.NORMAL, -kidsLost);
+        defendersHatchery.updateKidCount(KidType.NORMAL, -kidsDefeated);
+    }
+
+    public void updateResources() {
+        eggTimer.updateResoures(castles);
+    }
+
+    /*
+        TODO - This is kind of a hacky way of constructing messages. Find a more elegant solution.
+    */
+    private String constructFormattedString(final String message, final Object... args) {
+        return String.format(message, args);
+    }
 }
