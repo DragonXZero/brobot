@@ -4,7 +4,9 @@ import brobot.ResponseObject;
 import brobot.eggthemall.building.Hatchery;
 import brobot.eggthemall.castle.Castle;
 import brobot.eggthemall.egg.EggType;
+import brobot.eggthemall.encounter.BattleResult;
 import brobot.eggthemall.encounter.Encounter;
+import brobot.eggthemall.encounter.EncounterResolver;
 import brobot.eggthemall.encounter.RandomEncounterGenerator;
 import brobot.eggthemall.encounter.monster.Monster;
 import brobot.eggthemall.kid.KidType;
@@ -17,10 +19,13 @@ public class EggThemAll {
     private final Map<User, Castle> castles = new HashMap<>();
     private final EggTimer eggTimer;
     private final RandomEncounterGenerator randomEncounterGenerator;
+    private final EncounterResolver encounterResolver;
+    private Encounter currentEncounter;
 
     public EggThemAll() {
         eggTimer = new EggTimer(EggConstants.EGG_TIMER_UPDATE_FREQUENCY, EggConstants.EGG_TIMER_BLESSING_INCREMENT);
         randomEncounterGenerator = new RandomEncounterGenerator();
+        encounterResolver = new EncounterResolver();
     }
 
     /* TODO - Need a more elegant way of doing this. Maybe we can pull castle initialization outside of EggThemAll. */
@@ -37,9 +42,9 @@ public class EggThemAll {
      */
     public void ovulate(final User user, final StringBuilder messageToSend) {
         if (castles.containsKey(user)) {
-            messageToSend.append(constructFormattedString(EggMessages.OVULATE_FAIL));
+            messageToSend.append(EggUtils.constructFormattedString(EggMessages.OVULATE_FAIL));
         } else {
-            messageToSend.append(constructFormattedString(EggMessages.OVULATE_SUCCESS, user.getName()));
+            messageToSend.append(EggUtils.constructFormattedString(EggMessages.OVULATE_SUCCESS, user.getName()));
         }
     }
 
@@ -48,14 +53,14 @@ public class EggThemAll {
      */
     public void stealEggs(final User attacker, final User defender, final StringBuilder messageToSend) {
         if (attacker.equals(defender)) {
-            messageToSend.append(constructFormattedString(EggMessages.STEAL_EGGS_FAIL_SELF, attacker.getName()));
+            messageToSend.append(EggUtils.constructFormattedString(EggMessages.STEAL_EGGS_FAIL_SELF, attacker.getName()));
         } else {
             final Hatchery attackersHatchery = castles.get(attacker).getHatchery();
             final Hatchery defendersHatchery = castles.get(defender).getHatchery();
             long defenderEggCount = defendersHatchery.getEggCount(EggType.BASIC);
 
             if (defenderEggCount == 0) {
-                messageToSend.append(constructFormattedString(EggMessages.STEAL_EGGS_FAIL_NO_EGGS_TO_STEAL, defender.getName()));
+                messageToSend.append(EggUtils.constructFormattedString(EggMessages.STEAL_EGGS_FAIL_NO_EGGS_TO_STEAL, defender.getName()));
             } else {
                 // Keep generating a number until it is less than or equal to the defender's egg count
                 long eggsToSteal = ThreadLocalRandom.current().nextLong(EggConstants.EGG_STEAL_MIN, EggConstants.EGG_STEAL_MAX + 1);
@@ -67,7 +72,7 @@ public class EggThemAll {
                 attackersHatchery.updateEggCount(EggType.BASIC, eggsToSteal);
                 defendersHatchery.updateEggCount(EggType.BASIC, -eggsToSteal);
 
-                messageToSend.append(constructFormattedString(EggMessages.STEAL_EGGS_SUCCESS, attacker.getName(), eggsToSteal, defender.getName(),
+                messageToSend.append(EggUtils.constructFormattedString(EggMessages.STEAL_EGGS_SUCCESS, attacker.getName(), eggsToSteal, defender.getName(),
                         attackersHatchery.getEggCount(EggType.BASIC), defendersHatchery.getEggCount(EggType.BASIC)));
             }
         }
@@ -89,7 +94,7 @@ public class EggThemAll {
             hatchery.updateKidCount(KidType.NORMAL, kidsToMake);
             hatchery.updateEggCount(EggType.BASIC, -kidsToMake);
 
-            messageToSend.append(constructFormattedString(EggMessages.FERTILIZE_EGGS_SUCCESS, user.getName(), kidsToMake,
+            messageToSend.append(EggUtils.constructFormattedString(EggMessages.FERTILIZE_EGGS_SUCCESS, user.getName(), kidsToMake,
                     hatchery.getKidCount(KidType.NORMAL), hatchery.getEggCount(EggType.BASIC)));
         }
     }
@@ -113,7 +118,7 @@ public class EggThemAll {
                 attackersHatchery.updateKidCount(KidType.NORMAL, -numKidsToGive);
                 defendersHatchery.updateKidCount(KidType.NORMAL, numKidsToGive);
 
-                messageToSend.append(constructFormattedString(EggMessages.ABANDON_KIDS_SUCCESS, attacker.getName(), numKidsToGive, defender.getName(),
+                messageToSend.append(EggUtils.constructFormattedString(EggMessages.ABANDON_KIDS_SUCCESS, attacker.getName(), numKidsToGive, defender.getName(),
                         attackersHatchery.getKidCount(KidType.NORMAL), defendersHatchery.getKidCount(KidType.NORMAL)));
             }
         }
@@ -128,12 +133,12 @@ public class EggThemAll {
             final long numKids = hatchery.getKidCount(KidType.NORMAL);
 
             if (numKids == 0) {
-                messageToSend.append(constructFormattedString(EggMessages.COPULATE_FAIL_NO_KIDS, castle.getNameOfOwner()));
+                messageToSend.append(EggUtils.constructFormattedString(EggMessages.COPULATE_FAIL_NO_KIDS, castle.getNameOfOwner()));
             } else {
                 final long numEggsCreated = hatchery.getKidCount(KidType.NORMAL) / 2 + 1;
                 hatchery.updateEggCount(EggType.BASIC, numEggsCreated);
 
-                messageToSend.append(constructFormattedString(EggMessages.COPULATE_SUCCESS, castle.getNameOfOwner(), hatchery.getEggCount(EggType.BASIC)));
+                messageToSend.append(EggUtils.constructFormattedString(EggMessages.COPULATE_SUCCESS, castle.getNameOfOwner(), hatchery.getEggCount(EggType.BASIC)));
             }
         }
     }
@@ -150,14 +155,14 @@ public class EggThemAll {
             if (numKids <= numEggs) {
                 hatchery.updateEggCount(EggType.BASIC, -numKids);
 
-                messageToSend.append(constructFormattedString(EggMessages.THANOS_ENOUGH_EGGS, castle.getNameOfOwner(), numKids,
+                messageToSend.append(EggUtils.constructFormattedString(EggMessages.THANOS_ENOUGH_EGGS, castle.getNameOfOwner(), numKids,
                         hatchery.getEggCount(EggType.BASIC)));
             } else {
                 final long numKidsLost = numKids - numEggs;
                 hatchery.updateKidCount(KidType.NORMAL, -numKidsLost);
                 hatchery.updateEggCount(EggType.BASIC, -hatchery.getEggCount(EggType.BASIC));
 
-                messageToSend.append(constructFormattedString(EggMessages.THANOS_NOT_ENOUGH_EGGS, castle.getNameOfOwner(), numKidsLost,
+                messageToSend.append(EggUtils.constructFormattedString(EggMessages.THANOS_NOT_ENOUGH_EGGS, castle.getNameOfOwner(), numKidsLost,
                         hatchery.getKidCount(KidType.NORMAL), hatchery.getEggCount(EggType.BASIC)));
             }
         }
@@ -170,7 +175,7 @@ public class EggThemAll {
      */
     public void getResourceCounts(final User user, final StringBuilder messageToSend) {
         final Hatchery hatchery = castles.get(user).getHatchery();
-        messageToSend.append(constructFormattedString(EggMessages.RESOURCES_GET_SELF, user.getName(), hatchery.getKidCount(KidType.NORMAL),
+        messageToSend.append(EggUtils.constructFormattedString(EggMessages.RESOURCES_GET_SELF, user.getName(), hatchery.getKidCount(KidType.NORMAL),
                 hatchery.getEggCount(EggType.BASIC)));
     }
 
@@ -233,7 +238,7 @@ public class EggThemAll {
         final long attackersAttackPower = attackersCastle.getAttackValue();
         final long defendersDefensePower = defendersCastle.getDefenseValue();
 
-        messageToSend.append(constructFormattedString(EggMessages.ATTACK_INTRO, attacker.getName(), defender.getName()));
+        messageToSend.append(EggUtils.constructFormattedString(EggMessages.ATTACK_INTRO, attacker.getName(), defender.getName()));
 
         final Random rand = new Random();
         final int kidsLost;
@@ -250,24 +255,24 @@ public class EggThemAll {
             if (powerGapRating < .9) {
                 kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER) + 1);
                 kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER) + 1);
-                messageToSend.append(constructFormattedString(EggMessages.ATTACK_VICTORY));
+                messageToSend.append(EggUtils.constructFormattedString(EggMessages.ATTACK_VICTORY));
             } else {
                 kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER_OVERWHELMING) + 1);
                 kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER_OVERWHELMING) + 1);
-                messageToSend.append(constructFormattedString(EggMessages.ATTACK_VICTORY_OVERWHELMING));
+                messageToSend.append(EggUtils.constructFormattedString(EggMessages.ATTACK_VICTORY_OVERWHELMING));
             }
         } else {
             if (powerGapRating > -.9) {
                 kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER) + 1);
                 kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER) + 1);
-                messageToSend.append(constructFormattedString(EggMessages.ATTACK_DEFEAT));
+                messageToSend.append(EggUtils.constructFormattedString(EggMessages.ATTACK_DEFEAT));
             } else {
                 kidsLost = rand.nextInt((int) (attackerUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_LOSER_OVERWHELMING) + 1);
                 kidsDefeated = rand.nextInt((int) (defenderUpperBoundLoss * EggConstants.ATTACK_LOSS_MULTIPLIER_WINNER_OVERWHELMING) + 1);
-                messageToSend.append(constructFormattedString(EggMessages.ATTACK_DEFEAT_OVERWHELMING, defender.getName()));
+                messageToSend.append(EggUtils.constructFormattedString(EggMessages.ATTACK_DEFEAT_OVERWHELMING, defender.getName()));
             }
         }
-        messageToSend.append(constructFormattedString(EggMessages.ATTACK_BATTLE_SUMMARY, attacker.getName(), kidsLost, defender.getName(), kidsDefeated));
+        messageToSend.append(EggUtils.constructFormattedString(EggMessages.ATTACK_BATTLE_SUMMARY, attacker.getName(), kidsLost, defender.getName(), kidsDefeated));
         attackersHatchery.updateKidCount(KidType.NORMAL, -kidsLost);
         defendersHatchery.updateKidCount(KidType.NORMAL, -kidsDefeated);
     }
@@ -277,19 +282,36 @@ public class EggThemAll {
     }
 
     public void generateRandomEncounter(final ResponseObject responseObject) {
-        final Encounter encounter = randomEncounterGenerator.generateRandomEncounter();
-        final Monster monster = encounter.getMonster();
-
-        final String encounterMessage = "A wild **" + monster.getName() + "** has appeared!\n" + monster.toString();
-        responseObject.addMessage(encounterMessage);
-        responseObject.addMessage("What will you do?\n\t**1.** Attempt to seduce. \n\t**2.** Unzip. \n\t**3. **Admire.\n");
-        responseObject.addImage("/Users/john.vento/Desktop/Discord/brobot/src/main/java/brobot/eggthemall/encounter/monster/images/goblin.png");
+        if (currentEncounter != null) {
+            responseObject.addMessage(EggMessages.ENCOUNTER_ALREADY_IN_AN_ENCOUTER);
+        } else {
+            currentEncounter = randomEncounterGenerator.generateRandomEncounter();
+            final Monster monster = currentEncounter.getMonster();
+            final String encounterMessage = "A wild **" + monster.getName() + "** has appeared!\n" + monster.toString();
+            responseObject.addMessage(encounterMessage);
+            responseObject.addMessage("What will you do?\n\t**1.** Attempt to seduce. \n\t**2.** Unzip. \n\t**3. **Admire.\n");
+            responseObject.addImage("/Users/john.vento/Desktop/Discord/brobot/src/main/java/brobot/eggthemall/encounter/monster/images/goblin.png");
+        }
     }
 
-    /*
-        TODO - This is kind of a hacky way of constructing messages. Find a more elegant solution.
-    */
-    private String constructFormattedString(final String message, final Object... args) {
-        return String.format(message, args);
+    public void processEncounterAttack(final User attacker, final ResponseObject responseObject) {
+        if (currentEncounter == null) {
+            responseObject.addMessage(EggMessages.ENCOUNTER_NO_ENCOUNTER);
+        } else {
+            final Castle castle = castles.get(attacker);
+            BattleResult battleResult = currentEncounter.processAttack(responseObject, attacker, castle.getAttackValue());
+            if (battleResult != null) {
+                for (final Map.Entry<User, Long> eggReward : battleResult.getEggRewards().entrySet()) {
+                    final User user = eggReward.getKey();
+                    final long eggRewardAmount = eggReward.getValue();
+                    castles.get(user).getHatchery().updateEggCount(EggType.BASIC, eggRewardAmount);
+
+                    responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.ENCOUNTER_ATTACK_REWARD, user.getName(), eggRewardAmount,
+                            currentEncounter.getMonster().getName()));
+                }
+                currentEncounter = null;
+            }
+        }
     }
+
 }

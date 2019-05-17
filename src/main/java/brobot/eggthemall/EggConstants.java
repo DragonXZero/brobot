@@ -1,7 +1,7 @@
 package brobot.eggthemall;
 
 public class EggConstants {
-    /* egg related commands */
+    /* Egg related commands */
     public static final String CMD_OVULATE = "ovulate";
     public static final String CMD_ENTER_GAME = "give";
     public static final String CMD_STEAL_EGGS = "steal";
@@ -9,37 +9,41 @@ public class EggConstants {
     public static final String CMD_COPULATE = "copulate";
     public static final String CMD_THANOS = "let them eat cake";
 
-    /* kid related commands */
+    /* Kid related commands */
     public static final String CMD_GIVE_KIDS = "abandon";
 
-    /* castle related commands */
+    /* Castle related commands */
     public static final String CMD_DISPLAY_CASTLE_INFO = "castle";
     public static final String CMD_ATTACK = "attack";
 
-    /* resource related commands */
+    /* Resource related commands */
     public static final String CMD_DISPLAY_RESOURCE_COUNT = "count";
     public static final String CMD_DISPLAY_EGGBOARD = "eggboard";
 
-    /* misc commands TODO - Might want to pull these out and put them into BrobotConstants */
+    /* Encounter related constants */
+    public static final String CMD_ENCOUNTER_ATTACK = "e fight";
+    public static final String CMD_ENCOUNTER_FLEE = "e bitch";
+
+    /* Misc commands TODO - Might want to pull these out and put them into BrobotConstants */
     public static final String CMD_TICKLE = "tickle";
     public static final String CMD_GENERATE_RANDOM_ENCOUNTER = "explore";
 
-    /* resource constants */
+    /* Resource constants */
     public static final String RESOURCE_EGGS = "eggs";
     public static final String RESOURCE_KIDS = "kids";
 
-    /* egg timer constants */
+    /* Egg timer constants */
     public static int EGG_TIMER_UPDATE_FREQUENCY = 1000; // default to 10 seconds
     public static int EGG_TIMER_BLESSING_INCREMENT = 1; // 10 eggs per blessing
 
-    /* HatcheryConstants */
+    /* Hatchery constants */
     public static int HATCHERY_BASIC_EGG_ROLL_RESULT_MAX = 999;
     public static int HATCHERY_BASIC_EGG_ROLL_COMMON_THRESHOLD = 699;
     public static int HATCHERY_BASIC_EGG_ROLL_UNCOMMON_THRESHOLD = 949;
     public static int HATCHERY_BASIC_EGG_ROLL_RARE_THRESHOLD = 998;
     public static int HATCHERY_BASIC_EGG_ROLL_LEGENDARY_THRESHOLD = 999;
 
-    /* Combat related values */
+    /* Combat related constants */
     public static double ATTACK_LOSS_MULTIPLIER_DRAW = .1;
     public static double ATTACK_LOSS_MULTIPLIER_WINNER = .05;
     public static double ATTACK_LOSS_MULTIPLIER_WINNER_OVERWHELMING = .02;

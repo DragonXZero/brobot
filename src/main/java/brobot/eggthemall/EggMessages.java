@@ -37,5 +37,11 @@ public class EggMessages {
             "\tBattle Summary:"
             + "\n\t\t**%s**'s :baby:'s defeated in battle: %d"
             + "\n\t\t**%s**'s :baby:'s defeated in battle: %d";
+
+    public static final String ENCOUNTER_ALREADY_IN_AN_ENCOUTER = "There's already an ongoing encounter! Bitch out and run away or man up and resolve it!\n";
+    public static final String ENCOUNTER_NO_ENCOUNTER = "Dude, there's nothing here to fight... *insert john travolta gif*";
+    public static final String ENCOUNTER_ATTACK_SUCCESS = "**%s**, you dealt %d damage to %s! %s has %d :heart: left!\n";
+    public static final String ENCOUNTER_ATTACK_FAIL_NO_DAMAGE = "**%s**, your attack did no damage. You're so weak that the monster just ignores you... get swole.\n";
+    public static final String ENCOUNTER_ATTACK_REWARD = "Congratulations **%s**, you've received %d eggs for helping to defeat **%s**.\n";
 }
 

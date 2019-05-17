@@ -8,8 +8,9 @@ public class RandomEncounterGenerator {
         final long monsterHealth = 100l;
         final long monsterAttack = 10l;
         final long monsterDefense = 10l;
+        final long eggRewardCount = 1000l;
 
-        final Monster monster = new Monster(monsterName, monsterHealth, monsterAttack, monsterDefense);
+        final Monster monster = new Monster(monsterName, monsterHealth, monsterAttack, monsterDefense, eggRewardCount);
         final Encounter encounter = new Encounter(monster, EncounterConstants.ENCOUNTER_DURATION_DEFAULT);
 
         return encounter;
