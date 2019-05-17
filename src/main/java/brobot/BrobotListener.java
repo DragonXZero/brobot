@@ -24,11 +24,14 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 public class BrobotListener extends ListenerAdapter
 {
     private static BrobotMessageParser messageParser;
     private static EggThemAll eggThemAll;
+    public static Map<String, String> pokedex;
     /**
      * This is the method where the program starts.
      */
@@ -46,6 +49,13 @@ public class BrobotListener extends ListenerAdapter
 
             messageParser = new BrobotMessageParser();
             eggThemAll = new EggThemAll();
+
+            try {
+                pokedex = BrobotUtils.buildPokedex();
+            } catch (IOException e) {
+                System.out.println("There was an error building the Pokedex!");
+            }
+            System.out.println("Finished building the Pokedex!");
         }
         catch (LoginException e)
         {

@@ -67,6 +67,8 @@ dependencies {
         transitive = true
     }
 
+    compile 'org.jsoup:jsoup:1.12.1'
+
     compileOnly 'net.java.dev.jna:jna:4.4.0'
 
     /* Internal dependencies */

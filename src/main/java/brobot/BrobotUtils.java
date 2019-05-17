@@ -2,12 +2,16 @@ package brobot;
 
 import brobot.eggthemall.EggUtils;
 import net.dv8tion.jda.core.entities.User;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class BrobotUtils {
 
@@ -44,5 +48,24 @@ public class BrobotUtils {
             }
         } catch (Exception e) {
         }
+    }
+
+    public static Map<String, String> buildPokedex() throws IOException {
+        Map<String, String> pokemonNumberToNameMap = new LinkedHashMap<>();
+        Document doc = Jsoup.connect("https://www.serebii.net/pokemon/all.shtml").get();
+        Elements pokedex = doc.getElementsByClass("dextable");
+        Elements fooinfos = pokedex.select(".fooinfo");
+
+        for (int i = 0; i < fooinfos.size(); ++i) {
+            Element fooinfo = fooinfos.get(i);
+            String text = fooinfo.text();
+            if (!BrobotUtils.isNullOrEmpty(text) && (text.charAt(0)+"").equals("#")) {
+                Element nameElement = fooinfos.get(i+2);
+                String name = nameElement.text();
+                pokemonNumberToNameMap.put(text.substring(1), name);
+            }
+        }
+
+        return pokemonNumberToNameMap;
     }
 }

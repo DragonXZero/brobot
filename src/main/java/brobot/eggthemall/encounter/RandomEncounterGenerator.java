@@ -1,5 +1,6 @@
 package brobot.eggthemall.encounter;
 
+import brobot.BrobotListener;
 import brobot.eggthemall.encounter.monster.Monster;
 
 import java.io.*;
@@ -13,7 +14,7 @@ public class RandomEncounterGenerator {
         final File monsterFile = monsters[random.nextInt(monsters.length)];
         String[] parts = monsterFile.getAbsolutePath().split("\\\\");
         String monsterImageName = parts[parts.length-1];
-        String name = monsterImageName.split("\\.")[0];
+        String name = BrobotListener.pokedex.get(monsterImageName.split("\\.")[0]);
         String[] nameParts = name.split("_");
 
         StringBuilder nameBldr = new StringBuilder();
