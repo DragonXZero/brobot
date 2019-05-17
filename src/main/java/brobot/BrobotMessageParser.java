@@ -15,8 +15,7 @@ public class BrobotMessageParser {
         eggCommandHandlerImpl = new EggCommandHandlerImpl();
     }
 
-    public StringBuilder parseMessage(final Message discordMessage) {
-        final StringBuilder response = new StringBuilder();
+    public void parseMessage(final ResponseObject responseObject, final Message discordMessage) {
         final String content = discordMessage.getContentDisplay();
         final User author = discordMessage.getAuthor();
 
@@ -24,8 +23,6 @@ public class BrobotMessageParser {
         final List<String> commandParts = new ArrayList<>(Arrays.asList(parts));
 
         BrobotCommand command = new BrobotCommand(null, commandParts, discordMessage.getMentionedMembers(), author, content.toLowerCase());
-        eggCommandHandlerImpl.executeCommand(command, response);
-
-        return response;
+        eggCommandHandlerImpl.executeCommand(command, responseObject);
     }
 }

@@ -2,6 +2,7 @@ package brobot.eggthemall;
 
 import brobot.markov.MarkovChainGenerator;
 import brobot.mudae.ReverseLikeListLookup;
+import com.sun.xml.internal.bind.v2.TODO;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -88,5 +89,12 @@ public class EggUtils {
             .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
             .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
         return reverseSortedMap;
+    }
+
+    /*
+        TODO - This is kind of a hacky way of constructing messages. Find a more elegant solution.
+    */
+    public static String constructFormattedString(final String message, final Object... args) {
+        return String.format(message, args);
     }
 }
