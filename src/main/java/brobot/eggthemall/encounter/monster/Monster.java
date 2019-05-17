@@ -1,10 +1,14 @@
 package brobot.eggthemall.encounter.monster;
 
+import brobot.ResponseObject;
+import brobot.eggthemall.EggThemAll;
+import brobot.eggthemall.castle.Castle;
 import net.dv8tion.jda.core.entities.User;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Monster {
     protected final String name;
@@ -77,6 +81,15 @@ public class Monster {
         if (currentHealth == 0) {
             die();
         }
+        return damageDealt;
+    }
+
+    public long attack(final ResponseObject responseObject, final User defender) {
+        final Castle defendersCastle = EggThemAll.castles.get(defender);
+        long defense = defendersCastle.getDefenseValue();
+
+        Random random = new Random();
+        long damageDealt = attack * random.nextInt(10) - defense * random.nextInt(5);
         return damageDealt;
     }
 

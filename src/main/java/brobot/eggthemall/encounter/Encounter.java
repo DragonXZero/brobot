@@ -5,6 +5,7 @@ import brobot.eggthemall.EggMessages;
 import brobot.eggthemall.EggUtils;
 import brobot.eggthemall.encounter.monster.Monster;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.requests.Response;
 
 import java.util.Map;
 
@@ -24,23 +25,25 @@ public class Encounter {
     public BattleResult processAttack(final ResponseObject responseObject, final User attacker, final long damage) {
         final long damageDealt = monster.resolveAttack(attacker, damage);
         if (damageDealt == 0) {
-            responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.ENCOUNTER_ATTACK_FAIL_NO_DAMAGE, attacker.getName()));
+            responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.ENCOUNTER_FIGHT_FAIL_NO_DAMAGE, attacker.getName()));
         } else {
-            responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.ENCOUNTER_ATTACK_SUCCESS, attacker.getName(), damageDealt,
+            responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.ENCOUNTER_FIGHT_SUCCESS, attacker.getName(), damageDealt,
                     monster.getName(), monster.getName(), monster.getCurrentHealth()));
         }
 
-        // TODO - Implement logic to react to attacks.
+        final BattleResult battleResult;
         if (monster.isAlive()) {
-            return null;
+            long damageDealtToAttacker = monster.attack(responseObject, attacker);
+            battleResult = new BattleResult(true, damageDealtToAttacker);
         } else {
-            final BattleResult battleResult = new BattleResult();
+            battleResult = new BattleResult(false, -1);
             final double totalEggRewards = monster.getEggRewardAmount();
             for (Map.Entry<User, Long> entry : monster.getDamageReceivedMap().entrySet()) {
                 final long eggReward = (long) ((((double) entry.getValue()) / monster.getHealth()) * totalEggRewards);
                 battleResult.addEggReward(entry.getKey(), eggReward);
             }
-            return battleResult;
         }
+
+        return battleResult;
     }
 }

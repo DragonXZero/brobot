@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RandomEncounterGenerator {
     public Encounter generateRandomEncounter() {
         final Random random = new Random();
-        final String imagesPathMac = "src/main/java/brobot/eggthemall/encounter/monster/images/pokemon/full";
+        final String imagesPathMac = "src/main/java/brobot/eggthemall/encounter/monster/images/pokemon/sprites";
 //        final String imagesPathWindows = "\"..\\\\brobot\\\\src\\\\main\\\\java\\\\brobot\\\\eggthemall\\\\encounter\\\\monster\\\\images\\\\pokemon\\\\full\";"
         final File[] monsters = new File(imagesPathMac).listFiles(File::isFile);
         final File monsterFile = monsters[random.nextInt(monsters.length)];

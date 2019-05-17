@@ -1,5 +1,6 @@
 package brobot.eggthemall;
 
+import brobot.BrobotUtils;
 import brobot.ResponseObject;
 import brobot.eggthemall.building.Hatchery;
 import brobot.eggthemall.castle.Castle;
@@ -16,7 +17,8 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EggThemAll {
-    private final Map<User, Castle> castles = new HashMap<>();
+    // TODO - Change back to private. Changed to public static to test battle system.
+    public static final Map<User, Castle> castles = new HashMap<>();
     private final EggTimer eggTimer;
     private final RandomEncounterGenerator randomEncounterGenerator;
     private final EncounterResolver encounterResolver;
@@ -300,16 +302,21 @@ public class EggThemAll {
         } else {
             final Castle castle = castles.get(attacker);
             BattleResult battleResult = currentEncounter.processAttack(responseObject, attacker, castle.getAttackValue());
-            if (battleResult != null) {
+            if (!battleResult.isMonsterAlive()) {
                 for (final Map.Entry<User, Long> eggReward : battleResult.getEggRewards().entrySet()) {
                     final User user = eggReward.getKey();
                     final long eggRewardAmount = eggReward.getValue();
                     castles.get(user).getHatchery().updateEggCount(EggType.BASIC, eggRewardAmount);
 
-                    responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.ENCOUNTER_ATTACK_REWARD, user.getName(), eggRewardAmount,
+                    responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.ENCOUNTER_BATTLE_REWARD, user.getName(), eggRewardAmount,
                             currentEncounter.getMonster().getName()));
                 }
                 currentEncounter = null;
+            } else {
+                castle.takeDamage(battleResult.getDamageDealt());
+                responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.ENCOUNTER_FIGHT_COUNTER_ATTACK, attacker.getName(),
+                        currentEncounter.getMonster().getName(), battleResult.getDamageDealt()));
+                responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.CASTLE_HEALTH_INFO, attacker.getName(), castle.getCurrentHealth()));
             }
         }
     }

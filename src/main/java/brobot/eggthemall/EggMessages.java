@@ -26,6 +26,8 @@ public class EggMessages {
 
     public static final String RESOURCES_GET_SELF = "**%s**'s resources: %d kids and %d eggs!";
 
+    public static final String CASTLE_HEALTH_INFO = "**%s**, your castle now has %d health!";
+
     public static final String ATTACK_INTRO = "**%s**, your army clashes with **%s**'s army in an epic battle!\n";
     public static final String ATTACK_DRAW = "Both sides are too evenly matched! You retreat before your army suffers unnecessary casualties!\n";
     public static final String ATTACK_VICTORY = "Your army easily overpowers the opposing force!\n";
@@ -39,10 +41,11 @@ public class EggMessages {
             + "\n\t\t**%s**'s :baby:'s defeated in battle: %d";
 
     public static final String ENCOUNTER_ALREADY_IN_AN_ENCOUTER = "There's already an ongoing encounter! Bitch out and run away or man up and resolve it!\n";
-    public static final String ENCOUNTER_NO_ENCOUNTER = "Dude, there's nothing here to fight... *insert john travolta gif*";
-    public static final String ENCOUNTER_ATTACK_SUCCESS = "**%s**, you dealt %d damage to %s! %s has %d :heart: left!\n";
-    public static final String ENCOUNTER_ATTACK_FAIL_NO_DAMAGE = "**%s**, your attack did no damage. You're so weak that the monster just ignores you... get swole.\n";
-    public static final String ENCOUNTER_ATTACK_REWARD = "Congratulations **%s**, you've received %d eggs for helping to defeat **%s**.\n";
-    public static final String ENCOUNTER_FLEE_SUCCESS = "Damn **%s**, you a bitch tho.";
+    public static final String ENCOUNTER_NO_ENCOUNTER = "Dude, there's nothing here to fight... *insert john travolta gif*\n";
+    public static final String ENCOUNTER_FIGHT_SUCCESS = "**%s**, you dealt %d damage to %s! %s has %d :heart: left!\n";
+    public static final String ENCOUNTER_FIGHT_FAIL_NO_DAMAGE = "**%s**, your attack did no damage. You're so weak that the monster just ignores you... get swole.\n";
+    public static final String ENCOUNTER_FIGHT_COUNTER_ATTACK = "**%s**, you pissed off **%s**! It attacks you back for %d damage! Owwies! :<\n";
+    public static final String ENCOUNTER_BATTLE_REWARD = "Congratulations **%s**, you've received %d eggs for helping to defeat **%s**.\n";
+    public static final String ENCOUNTER_FLEE_SUCCESS = "Damn **%s**, you a bitch tho.\n";
 }
 

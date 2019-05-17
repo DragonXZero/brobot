@@ -16,11 +16,17 @@ public class Castle {
     private final Hatchery hatchery;
     private final Map<String, Map<String, Long>> resourceCounts = new HashMap<>();
 
+    private long level;
+    private long maximumHealth;
+    private long currentHealth;
+
     public Castle (final User owner) {
         this.owner = owner;
         this.nameOfOwner = owner.getName();
         this.castleName = nameOfOwner + "'s Castle";
         this.hatchery = new Hatchery();
+        this.level = 1;
+        this.maximumHealth = this.currentHealth = 100;
     }
 
     public User getOwner() {
@@ -47,9 +53,17 @@ public class Castle {
         return hatchery.getKidCount(KidType.NORMAL);
     }
 
+    public long getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public void takeDamage(final long damageTaken) {
+        this.currentHealth = currentHealth - damageTaken <= 0 ? 0 : currentHealth - damageTaken;
+    }
+
     @Override
     public String toString() {
-        return castleName + "\t :crossed_swords: : " + getAttackValue() + " :shield: : " + getDefenseValue() + "\n" +
+        return castleName + "\n :heart: : " + currentHealth + "/" + maximumHealth + " :crossed_swords: : " + getAttackValue() + " :shield: : " + getDefenseValue() + "\n" +
                 BrobotConstants.SEPARATOR + "\n\t:egg: : " + hatchery.getEggCount(EggType.BASIC) + "\n\t:baby: : " + hatchery.getKidCount(KidType.NORMAL);
     }
 

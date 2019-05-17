@@ -6,10 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BattleResult {
-    public final Map<User, Long> eggRewards;
+    private final Map<User, Long> eggRewards;
+    private final Boolean monsterAlive;
+    private long damageDealt;
 
-    public BattleResult() {
-        eggRewards = new HashMap<>();
+    public BattleResult(final boolean monsterAlive, final long damageDealt) {
+        this.monsterAlive = monsterAlive;
+        this.eggRewards = new HashMap<>();
+        this.damageDealt = damageDealt;
     }
 
     public Map<User, Long> getEggRewards() {
@@ -18,5 +22,13 @@ public class BattleResult {
 
     public void addEggReward (final User user, final long eggRewardCount) {
         eggRewards.put(user, eggRewardCount);
+    }
+
+    public boolean isMonsterAlive() {
+        return monsterAlive;
+    }
+
+    public long getDamageDealt() {
+        return damageDealt;
     }
 }
