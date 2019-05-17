@@ -7,16 +7,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Monster {
-    private final String name;
-    private final String spritePath;
-    private final long health;
-    private final long attack;
-    private final long defense;
-    private final long eggRewardAmount;
+    protected final String name;
+    protected final String spritePath;
+    protected final long health;
+    protected final long attack;
+    protected final long defense;
+    protected final long eggRewardAmount;
 
-    private transient Map<User, Long> damageReceivedMap;
-    private transient long currentHealth;
-    private transient boolean alive;
+    protected transient Map<User, Long> damageReceivedMap;
+    protected transient long currentHealth;
+    protected transient boolean alive;
 
     public Monster(final String name, final String spritePath, final long health, final long attack, final long defense, final long eggRewardAmount) {
         this.name = name;

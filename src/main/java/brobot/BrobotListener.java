@@ -15,6 +15,7 @@ package brobot;/*
  */
 
 import brobot.eggthemall.EggThemAll;
+import brobot.pokemon.PokemonInfo;
 import net.dv8tion.jda.client.entities.Group;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -31,7 +32,7 @@ public class BrobotListener extends ListenerAdapter
 {
     private static BrobotMessageParser messageParser;
     private static EggThemAll eggThemAll;
-    public static Map<String, String> pokedex;
+    public static Map<String, PokemonInfo> pokedex;
     /**
      * This is the method where the program starts.
      */
