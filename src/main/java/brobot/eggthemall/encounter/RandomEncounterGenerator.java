@@ -2,13 +2,13 @@ package brobot.eggthemall.encounter;
 
 import brobot.eggthemall.encounter.monster.Monster;
 
-import java.io.File;
+import java.io.*;
 import java.util.Random;
 
 public class RandomEncounterGenerator {
     public Encounter generateRandomEncounter() {
         final Random random = new Random();
-        final File[] monsters = new File("..\\brobot\\src\\main\\java\\brobot\\eggthemall\\encounter\\monster\\images\\ffi").listFiles(File::isFile);
+        final File[] monsters = new File("..\\brobot\\src\\main\\java\\brobot\\eggthemall\\encounter\\monster\\images\\pokemon\\full").listFiles(File::isFile);
 
         final File monsterFile = monsters[random.nextInt(monsters.length)];
         String[] parts = monsterFile.getAbsolutePath().split("\\\\");
