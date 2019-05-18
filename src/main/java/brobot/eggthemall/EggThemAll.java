@@ -83,9 +83,9 @@ public class EggThemAll {
     /*
         Fertilize the specified number of eggs and turn them into kids.
      */
-    public void fertilize(final User user, final StringBuilder messageToSend, final String msg) {
+    public void fertilize(final User user, final StringBuilder messageToSend, final long quantity) {
         final Hatchery hatchery = castles.get(user).getHatchery();
-        final long kidsToMake = Long.parseLong(msg.substring(msg.indexOf("[")+1, msg.indexOf("]")));
+        final long kidsToMake = quantity;
         final long currentEggCount = hatchery.getEggCount(EggType.BASIC);
 
         if (kidsToMake < 0) {
@@ -104,14 +104,14 @@ public class EggThemAll {
     /*
         Gives an amount of kids to the mentioned user.
      */
-    public void giveKids(final User attacker, final User defender, final StringBuilder messageToSend, final String msg) {
+    public void giveKids(final User attacker, final User defender, final StringBuilder messageToSend, final long quantity) {
         final Hatchery attackersHatchery = castles.get(attacker).getHatchery();
         final Hatchery defendersHatchery = castles.get(defender).getHatchery();
 
         if (attacker.equals(defender)) {
             messageToSend.append(EggMessages.ABANDON_KIDS_FAIL_SELF);
         } else {
-            final long numKidsToGive = Long.parseLong(msg.substring(msg.indexOf("[")+1, msg.indexOf("]")));
+            final long numKidsToGive = quantity;
             final long attackerNumKids = attackersHatchery.getKidCount(KidType.NORMAL);
 
             if (numKidsToGive > attackerNumKids) {

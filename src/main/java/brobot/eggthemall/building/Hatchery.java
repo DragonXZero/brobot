@@ -15,11 +15,12 @@ public class Hatchery {
             eggTypeCounts.put(eggType, 0l);
         }
 
-        eggTypeCounts.put(EggType.BASIC, EggConstants.EGG_OVULATION_AMOUNT);
-
         for (final KidType kidType : KidType.values()) {
             kidTypeCounts.put(kidType, 0l);
         }
+
+        eggTypeCounts.put(EggType.BASIC, EggConstants.EGG_OVULATION_AMOUNT);
+        kidTypeCounts.put(KidType.NORMAL, EggConstants.EGG_OVULATION_AMOUNT);
     }
 
     public long getEggCount(final EggType eggType) {

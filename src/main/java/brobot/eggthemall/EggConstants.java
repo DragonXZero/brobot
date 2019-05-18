@@ -3,30 +3,43 @@ package brobot.eggthemall;
 public class EggConstants {
     /* Egg related commands */
     public static final String CMD_OVULATE = "ovulate";
+    public static final String CMD_OVULATE_SHORTCUT = "o";
     public static final String CMD_ENTER_GAME = "give";
+    public static final String CMD_ENTER_GAME_SHORTCUT = "g";
     public static final String CMD_STEAL_EGGS = "steal";
+    public static final String CMD_STEAL_EGGS_SHORTCUT = "s";
     public static final String CMD_FERTILIZE_EGGS = "fertilize";
+    public static final String CMD_FERTILIZE_EGGS_SHORTCUT = "fe";
     public static final String CMD_COPULATE = "copulate";
-    public static final String CMD_THANOS = "let them eat cake";
+    public static final String CMD_COPULATE_SHORTCUT = "x";
+    public static final String CMD_THANOS = "cake";
 
     /* Kid related commands */
     public static final String CMD_GIVE_KIDS = "abandon";
+    public static final String CMD_GIVE_KIDS_SHORTCUT = "n";
 
     /* Castle related commands */
     public static final String CMD_DISPLAY_CASTLE_INFO = "castle";
+    public static final String CMD_DISPLAY_CASTLE_INFO_SHORTCUT = "c";
+
     public static final String CMD_ATTACK = "attack";
+    public static final String CMD_ATTACK_SHORTCUT = "a";
+
 
     /* Resource related commands */
     public static final String CMD_DISPLAY_RESOURCE_COUNT = "count";
     public static final String CMD_DISPLAY_EGGBOARD = "eggboard";
 
     /* Encounter related constants */
-    public static final String CMD_ENCOUNTER_ATTACK = "e fight";
-    public static final String CMD_ENCOUNTER_FLEE = "e bitch";
+    public static final String CMD_ENCOUNTER_ATTACK = "fight";
+    public static final String CMD_ENCOUNTER_ATTACK_SHORTCUT = "f";
+    public static final String CMD_ENCOUNTER_FLEE = "bitch";
+    public static final String CMD_ENCOUNTER_FLEE_SHORTCUT = "r";
 
     /* Misc commands TODO - Might want to pull these out and put them into BrobotConstants */
     public static final String CMD_TICKLE = "tickle";
     public static final String CMD_GENERATE_RANDOM_ENCOUNTER = "explore";
+    public static final String CMD_GENERATE_RANDOM_ENCOUNTER_SHORTCUT = "e";
 
     /* Resource constants */
     public static final String RESOURCE_EGGS = "eggs";

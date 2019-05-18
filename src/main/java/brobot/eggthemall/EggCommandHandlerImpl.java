@@ -21,7 +21,8 @@ public class EggCommandHandlerImpl implements CommandHandler {
 
         final StringBuilder response = responseObject.getResponseBldr();
         final User attacker = brobotCommand.getAuthor();
-        final String rawCommand = brobotCommand.getRawCommand();
+        final String command = brobotCommand.getCommand();
+        final long commandVal = brobotCommand.getCommandVal();
         final List<Member> members = brobotCommand.getMentionedUsers();
 
         if (members != null && members.size() == 1) {
@@ -29,43 +30,82 @@ public class EggCommandHandlerImpl implements CommandHandler {
             final User defender = members.get(0).getUser();
             eggThemAll.initializeCastleIfNotInitialized(attacker, defender);
 
-            if (rawCommand.contains(EggConstants.CMD_TICKLE)) {
-                BrobotUtils.tickle(defender, response);
-            } else if (rawCommand.contains(EggConstants.CMD_OVULATE)) {
-                eggThemAll.ovulate(defender, response);
-            } else if (rawCommand.contains(EggConstants.CMD_STEAL_EGGS)) {
-                eggThemAll.stealEggs(attacker, defender, response);
-            } else if (rawCommand.contains(EggConstants.CMD_GIVE_KIDS)) {
-                eggThemAll.giveKids(attacker, defender, response, rawCommand);
-            } else if (rawCommand.contains(EggConstants.CMD_ATTACK)) {
-                eggThemAll.attack(attacker, defender, response);
+            switch (command) {
+                case EggConstants.CMD_TICKLE: {
+                    BrobotUtils.tickle(defender, response);
+                    break;
+                }
+                case EggConstants.CMD_OVULATE:
+                case EggConstants.CMD_OVULATE_SHORTCUT: {
+                    eggThemAll.ovulate(defender, response);
+                    break;
+                }
+                case EggConstants.CMD_STEAL_EGGS:
+                case EggConstants.CMD_STEAL_EGGS_SHORTCUT: {
+                    eggThemAll.stealEggs(attacker, defender, response);
+                    break;
+                }
+                case EggConstants.CMD_GIVE_KIDS:
+                case EggConstants.CMD_GIVE_KIDS_SHORTCUT: {
+                    eggThemAll.giveKids(attacker, defender, response, commandVal);
+                    break;
+                }
+                case EggConstants.CMD_ATTACK:
+                case EggConstants.CMD_ATTACK_SHORTCUT: {
+                    eggThemAll.attack(attacker, defender, response);
+                    break;
+                }
+                default: {
+                    responseObject.addMessage(EggMessages.INVALID_COMMAND);
+                }
             }
         } else {
             // Commands that do not require a mentioned user, these might be global
             eggThemAll.initializeCastleIfNotInitialized(attacker);
 
-            if (rawCommand.contains(EggConstants.CMD_FERTILIZE_EGGS)) {
-                eggThemAll.fertilize(attacker, response, rawCommand);
-            } else if (rawCommand.contains(EggConstants.CMD_COPULATE)) {
-                eggThemAll.copulate(attacker, response);
-            } else if (rawCommand.contains(EggConstants.CMD_THANOS)) {
-                eggThemAll.eatCake(response);
-            } else if (rawCommand.contains(EggConstants.CMD_DISPLAY_RESOURCE_COUNT)) {
-                eggThemAll.getResourceCounts(attacker, response);
-            } else if (rawCommand.contains(EggConstants.CMD_DISPLAY_EGGBOARD)) {
-                response.append(EggMessages.UNDER_CONSTRUCTION);
-//                List<StringBuilder> bldrs = eggThemAll.displayLeaderBoard();
-//                for (StringBuilder bldr : bldrs) {
-//                    channel.sendMessage(bldr.toString()).queue();
-//                }
-            } else if (rawCommand.contains(EggConstants.CMD_DISPLAY_CASTLE_INFO)) {
-                eggThemAll.displayCastleInfo(attacker, response);
-            } else if (rawCommand.contains(EggConstants.CMD_GENERATE_RANDOM_ENCOUNTER)) {
-                eggThemAll.generateRandomEncounter(responseObject);
-            }  else if (rawCommand.contains(EggConstants.CMD_ENCOUNTER_ATTACK)) {
-                eggThemAll.processEncounterAttack(attacker, responseObject);
-            }  else if (rawCommand.contains(EggConstants.CMD_ENCOUNTER_FLEE)) {
-                eggThemAll.processEncounterFlee(attacker, responseObject);
+            switch (command) {
+                case EggConstants.CMD_FERTILIZE_EGGS:
+                case EggConstants.CMD_FERTILIZE_EGGS_SHORTCUT: {
+                    eggThemAll.fertilize(attacker, response, commandVal);
+                    break;
+                }
+                case EggConstants.CMD_COPULATE:
+                case EggConstants.CMD_COPULATE_SHORTCUT: {
+                    eggThemAll.copulate(attacker, response);
+                    break;
+                }
+                case EggConstants.CMD_DISPLAY_CASTLE_INFO_SHORTCUT:
+                case EggConstants.CMD_DISPLAY_CASTLE_INFO: {
+                    eggThemAll.displayCastleInfo(attacker, response);
+                    break;
+                }
+                case EggConstants.CMD_GENERATE_RANDOM_ENCOUNTER:
+                case EggConstants.CMD_GENERATE_RANDOM_ENCOUNTER_SHORTCUT: {
+                    eggThemAll.generateRandomEncounter(responseObject);
+                    break;
+                }
+                case EggConstants.CMD_ENCOUNTER_ATTACK:
+                case EggConstants.CMD_ENCOUNTER_ATTACK_SHORTCUT: {
+                    eggThemAll.processEncounterAttack(attacker, responseObject);
+                    break;
+                }
+                case EggConstants.CMD_ENCOUNTER_FLEE:
+                case EggConstants.CMD_ENCOUNTER_FLEE_SHORTCUT: {
+                    eggThemAll.processEncounterFlee(attacker, responseObject);
+                    break;
+                }
+                case EggConstants.CMD_DISPLAY_RESOURCE_COUNT: {
+                    eggThemAll.getResourceCounts(attacker, response);
+                    break;
+                }
+                case EggConstants.CMD_DISPLAY_EGGBOARD: {
+                    response.append(EggMessages.UNDER_CONSTRUCTION);
+                    break;
+                }
+                case EggConstants.CMD_THANOS: {
+                    eggThemAll.eatCake(response);
+                    break;
+                }
             }
         }
     }

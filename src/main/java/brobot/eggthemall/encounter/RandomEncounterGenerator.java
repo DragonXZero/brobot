@@ -17,7 +17,7 @@ public class RandomEncounterGenerator {
     public Encounter generateRandomEncounter() {
         final Random random = new Random();
         final String imagesPathMac = "src/main/java/brobot/eggthemall/encounter/monster/images";
-        
+
         Object[] monsters = new File[] {};
         try {
             monsters = Files.walk(Paths.get(imagesPathMac)).toArray();

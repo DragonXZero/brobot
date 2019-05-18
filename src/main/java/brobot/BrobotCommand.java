@@ -41,4 +41,15 @@ public class BrobotCommand {
     public String getRawCommand() {
         return rawCommand;
     }
+
+    public String getCommand() {
+        return commandParts.get(0);
+    }
+
+    public long getCommandVal() {
+        if (commandParts.size() > 1 && !Character.valueOf(commandParts.get(1).charAt(0)).equals("@")) {
+            return Long.parseLong(commandParts.get(1));
+        }
+        return 0l;
+    }
 }
