@@ -47,7 +47,7 @@ public class BrobotCommand {
     }
 
     public long getCommandVal() {
-        if (commandParts.size() > 1 && !Character.valueOf(commandParts.get(1).charAt(0)).equals("@")) {
+        if (commandParts.size() > 1 && !(commandParts.get(1).charAt(0) + "").equals("@")) {
             return Long.parseLong(commandParts.get(1));
         }
         return 0l;
