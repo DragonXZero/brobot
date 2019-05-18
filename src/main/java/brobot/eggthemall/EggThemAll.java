@@ -326,4 +326,8 @@ public class EggThemAll {
         responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.ENCOUNTER_FLEE_SUCCESS, user.getName()));
     }
 
+    public void displayHelpInformation(final ResponseObject responseObject) {
+        responseObject.addMessage(EggMessages.HELP_MESSAGE);
+    }
+
 }

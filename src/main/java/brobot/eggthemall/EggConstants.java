@@ -2,6 +2,9 @@ package brobot.eggthemall;
 
 public class EggConstants {
     /* Egg related commands */
+    public static final String CMD_HELP = "help";
+    public static final String CMD_HELP_SHORTCUT = "h";
+
     public static final String CMD_OVULATE = "ovulate";
     public static final String CMD_OVULATE_SHORTCUT = "o";
     public static final String CMD_ENTER_GAME = "give";
@@ -31,6 +34,8 @@ public class EggConstants {
     public static final String CMD_DISPLAY_EGGBOARD = "eggboard";
 
     /* Encounter related constants */
+    public static final String CMD_GENERATE_RANDOM_ENCOUNTER = "explore";
+    public static final String CMD_GENERATE_RANDOM_ENCOUNTER_SHORTCUT = "e";
     public static final String CMD_ENCOUNTER_ATTACK = "fight";
     public static final String CMD_ENCOUNTER_ATTACK_SHORTCUT = "f";
     public static final String CMD_ENCOUNTER_FLEE = "bitch";
@@ -38,8 +43,6 @@ public class EggConstants {
 
     /* Misc commands TODO - Might want to pull these out and put them into BrobotConstants */
     public static final String CMD_TICKLE = "tickle";
-    public static final String CMD_GENERATE_RANDOM_ENCOUNTER = "explore";
-    public static final String CMD_GENERATE_RANDOM_ENCOUNTER_SHORTCUT = "e";
 
     /* Resource constants */
     public static final String RESOURCE_EGGS = "eggs";

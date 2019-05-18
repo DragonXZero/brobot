@@ -47,5 +47,17 @@ public class EggMessages {
     public static final String ENCOUNTER_FIGHT_COUNTER_ATTACK = "**%s**, you pissed off **%s**! It attacks you back for %d damage! Owwies! :<\n";
     public static final String ENCOUNTER_BATTLE_REWARD = "Congratulations **%s**, you've received %d eggs for helping to defeat **%s**.\n";
     public static final String ENCOUNTER_FLEE_SUCCESS = "Damn **%s**, you a bitch tho.\n";
+
+    public static final String HELP_MESSAGE =
+            "**steal/s** @user : steal eggs\n" +
+            "**fertilize/fe** <val> : make kids from eggs\n" +
+            "**copulate/x** : all castles's kids make eggs\n" +
+            "**abandon/n** <val> @user :  give your kids away\n" +
+            "**castle/c** : display your castle's info\n" +
+            "**attack/a** @user : attacks a castle\n" +
+            "**explore/e** : generates an encounter, beware\n" +
+            "**fight/f** : fights the monster in the encounter\n" +
+            "**bitch/r** : ends the current encounter\n" +
+            "**cake** :  mini-thanos the server\n";
 }
 

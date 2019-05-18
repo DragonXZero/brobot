@@ -64,6 +64,11 @@ public class EggCommandHandlerImpl implements CommandHandler {
             eggThemAll.initializeCastleIfNotInitialized(attacker);
 
             switch (command) {
+                case EggConstants.CMD_HELP:
+                case EggConstants.CMD_HELP_SHORTCUT: {
+                    eggThemAll.displayHelpInformation(responseObject);
+                    break;
+                }
                 case EggConstants.CMD_FERTILIZE_EGGS:
                 case EggConstants.CMD_FERTILIZE_EGGS_SHORTCUT: {
                     eggThemAll.fertilize(attacker, response, commandVal);
