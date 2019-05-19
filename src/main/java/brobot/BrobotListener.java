@@ -33,6 +33,7 @@ public class BrobotListener extends ListenerAdapter
     private static BrobotMessageParser messageParser;
     private static EggThemAll eggThemAll;
     public static Map<String, PokemonInfo> pokedex;
+    private final String messageToSend = "Hello World!";
     /**
      * This is the method where the program starts.
      */
