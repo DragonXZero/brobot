@@ -1,4 +1,4 @@
-package brobot.eggthemall.encounter.monster;
+package brobot.eggthemall.monster;
 
 import brobot.ResponseObject;
 import brobot.eggthemall.EggThemAll;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class Monster {
+public class MonsterType {
     protected final String name;
     protected final String spritePath;
     protected final long health;
@@ -22,7 +22,7 @@ public class Monster {
     protected transient long currentHealth;
     protected transient boolean alive;
 
-    public Monster(final String name, final String spritePath, final long health, final long attack, final long defense, final long eggRewardAmount) {
+    public MonsterType(final String name, final String spritePath, final long health, final long attack, final long defense, final long eggRewardAmount) {
         this.name = name;
         this.spritePath = spritePath;
         this.health = health;

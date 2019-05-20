@@ -1,6 +1,5 @@
 package brobot.eggthemall;
 
-import brobot.BrobotUtils;
 import brobot.ResponseObject;
 import brobot.eggthemall.building.Hatchery;
 import brobot.eggthemall.castle.Castle;
@@ -9,7 +8,7 @@ import brobot.eggthemall.encounter.BattleResult;
 import brobot.eggthemall.encounter.Encounter;
 import brobot.eggthemall.encounter.EncounterResolver;
 import brobot.eggthemall.encounter.RandomEncounterGenerator;
-import brobot.eggthemall.encounter.monster.Monster;
+import brobot.eggthemall.Monster;
 import brobot.eggthemall.kid.KidType;
 import net.dv8tion.jda.core.entities.User;
 
