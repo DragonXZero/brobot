@@ -28,9 +28,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-public class BrobotListener extends ListenerAdapter
+public class Brobot extends ListenerAdapter
 {
-    private static BrobotMessageParser messageParser;
+    private static MessageParser messageParser;
     private static EggThemAll eggThemAll;
     public static Map<String, PokemonInfo> pokedex;
 
@@ -44,16 +44,16 @@ public class BrobotListener extends ListenerAdapter
         try
         {
             JDA jda = new JDABuilder(BrobotConstants.DEVELOPER_TOKEN)         // The token of the account that is logging in.
-                    .addEventListener(new BrobotListener())  // An instance of a class that will handle events.
+                    .addEventListener(new Brobot())  // An instance of a class that will handle events.
                     .build();
             jda.awaitReady(); // Blocking guarantees that JDA will be completely loaded.
             System.out.println("Finished Building JDA!");
 
-            messageParser = new BrobotMessageParser();
+            messageParser = new MessageParser();
             eggThemAll = new EggThemAll();
 
             try {
-                pokedex = BrobotUtils.buildPokedex();
+                pokedex = Utils.buildPokedex();
             } catch (IOException e) {
                 System.out.println("There was an error building the Pokedex!");
             }
@@ -150,8 +150,9 @@ public class BrobotListener extends ListenerAdapter
 
         final ResponseObject responseObject = new ResponseObject();
 
-        if (!BrobotUtils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
-            messageParser.parseMessage(responseObject, message);
+        if (!Utils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
+            RequestObject requestObject = messageParser.parseMessage(responseObject, message);
+            requestObject.executeCommand(responseObject);
         }
 
         final StringBuilder responseBldr = responseObject.getResponseBldr();

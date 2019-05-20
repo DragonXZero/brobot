@@ -1,18 +1,15 @@
 package brobot.eggthemall;
 
-import brobot.RequestObject;
-import brobot.CommandHandler;
-import brobot.BrobotUtils;
-import brobot.ResponseObject;
+import brobot.*;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 
 import java.util.List;
 
-public class EggCommandHandlerImpl implements CommandHandler {
+public class EggThemAllCommandExecutor implements CommandExecutor {
     private final EggThemAll eggThemAll;
 
-    public EggCommandHandlerImpl () {
+    public EggThemAllCommandExecutor()  {
         eggThemAll = new EggThemAll();
     }
 
@@ -32,7 +29,7 @@ public class EggCommandHandlerImpl implements CommandHandler {
 
             switch (command) {
                 case EggConstants.CMD_TICKLE: {
-                    BrobotUtils.tickle(defender, response);
+                    Utils.tickle(defender, response);
                     break;
                 }
                 case EggConstants.CMD_OVULATE:

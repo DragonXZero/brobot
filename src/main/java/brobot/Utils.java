@@ -13,7 +13,7 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class BrobotUtils {
+public class Utils {
 
     public static void tickle(final User user, final StringBuilder messageToSend) {
         messageToSend.append("Did someone say tickle??? You tickle ")
@@ -67,7 +67,7 @@ public class BrobotUtils {
         for (int i = 0; i < fooinfos.size(); ++i) {
             Element fooinfo = fooinfos.get(i);
             String text = fooinfo.text();
-            if (!BrobotUtils.isNullOrEmpty(text) && (text.charAt(0)+"").equals("#")) {
+            if (!Utils.isNullOrEmpty(text) && (text.charAt(0)+"").equals("#")) {
                 String pokedexNumber = text.substring(1);
                 String name = fooinfos.get(i+2).text();
                 int hp = Integer.parseInt(fooinfos.get(i+5).text());

@@ -1,7 +1,7 @@
 package brobot.eggthemall.encounter;
 
-import brobot.BrobotListener;
-import brobot.BrobotUtils;
+import brobot.Brobot;
+import brobot.Utils;
 import brobot.eggthemall.monster.Monster;
 import brobot.eggthemall.monster.Pokemon;
 import brobot.pokemon.PokemonInfo;
@@ -28,7 +28,7 @@ public class RandomEncounterGenerator {
         final File monsterFile = ((Path) monsters[random.nextInt(monsters.length)]).toFile();
         String[] parts = monsterFile.getAbsolutePath().split("\\\\");
         String monsterImageName = parts[parts.length-1];
-        PokemonInfo pokemonInfo = BrobotListener.pokedex.get(
+        PokemonInfo pokemonInfo = Brobot.pokedex.get(
                 monsterImageName.substring(monsterImageName.lastIndexOf(".") - 3).split("\\.")[0]);
 
         final Monster monster;
@@ -36,7 +36,7 @@ public class RandomEncounterGenerator {
             String[] pathParts = monsterImageName.split("/");
             String[] nameParts = pathParts[pathParts.length-1].split("\\.")[0].split("_");
             StringBuilder nameBldr = new StringBuilder();
-            BrobotUtils.concatAndCamelCaseStrings(nameBldr, nameParts);
+            Utils.concatAndCamelCaseStrings(nameBldr, nameParts);
             final String monsterName = nameBldr.toString();
             final long monsterHealth = 100l;
             final long monsterAttack = 10l;

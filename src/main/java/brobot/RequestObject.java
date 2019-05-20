@@ -54,7 +54,11 @@ public class RequestObject {
         return 0l;
     }
 
-    public void executeCommand() {
-
+    public void executeCommand(ResponseObject responseObject) {
+        if (commandType == CommandType.EGG_THEM_ALL) {
+            CommandExecutorManager.EGG_THEM_ALL_EXECUTOR.executeCommand(this, responseObject);
+        } else if (commandType == CommandType.MARKOV) {
+            CommandExecutorManager.MARKOV.executeCommand(this, responseObject);
+        }
     }
 }

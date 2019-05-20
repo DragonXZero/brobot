@@ -1,5 +1,11 @@
 package brobot.markov;
 
-public class MarkovCommandExecutor {
+import brobot.CommandExecutor;
+import brobot.RequestObject;
+import brobot.ResponseObject;
 
+public class MarkovCommandExecutor implements CommandExecutor {
+    public void executeCommand(final RequestObject requestObject, final ResponseObject responseObject) {
+
+    }
 }
