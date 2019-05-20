@@ -1,4 +1,7 @@
 package brobot.command;
 
-public class BrobotCommandImpl {
+public class BrobotCommandImpl implements Command {
+    public void execute() {
+
+    }
 }

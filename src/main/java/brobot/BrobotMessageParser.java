@@ -1,5 +1,6 @@
 package brobot;
 
+import brobot.command.CommandType;
 import brobot.eggthemall.EggCommandHandlerImpl;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
@@ -22,7 +23,10 @@ public class BrobotMessageParser {
         final String[] parts = content.substring(1).split(" ");
         final List<String> commandParts = new ArrayList<>(Arrays.asList(parts));
 
-        BrobotCommand command = new BrobotCommand(null, commandParts, discordMessage.getMentionedMembers(), author, content.toLowerCase());
-        eggCommandHandlerImpl.executeCommand(command, responseObject);
+        final CommandType commandType = commandParts.get(0).equals(BrobotConstants.MARKOV_COMMAND_PREFIX) || commandParts.get(0).equals(BrobotConstants.MARKOV_COMMAND_PREFIX_SHORTCUT)
+                ? CommandType.MARKOV : CommandType.EGG_THEM_ALL;
+        RequestObject requestObject = new RequestObject(commandType, commandParts, discordMessage.getMentionedMembers(), author, content.toLowerCase());
+        requestObject.executeCommand();
+        eggCommandHandlerImpl.executeCommand(requestObject, responseObject);
     }
 }

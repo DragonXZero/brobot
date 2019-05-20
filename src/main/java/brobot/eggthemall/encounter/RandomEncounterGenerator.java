@@ -2,8 +2,8 @@ package brobot.eggthemall.encounter;
 
 import brobot.BrobotListener;
 import brobot.BrobotUtils;
-import brobot.eggthemall.encounter.monster.Monster;
-import brobot.eggthemall.encounter.monster.Pokemon;
+import brobot.eggthemall.monster.Monster;
+import brobot.eggthemall.monster.Pokemon;
 import brobot.pokemon.PokemonInfo;
 
 import java.io.*;

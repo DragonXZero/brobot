@@ -3,9 +3,8 @@ package brobot.eggthemall.encounter;
 import brobot.ResponseObject;
 import brobot.eggthemall.EggMessages;
 import brobot.eggthemall.EggUtils;
-import brobot.eggthemall.encounter.monster.Monster;
+import brobot.eggthemall.monster.Monster;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.requests.Response;
 
 import java.util.Map;
 

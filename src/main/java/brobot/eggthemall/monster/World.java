@@ -1,4 +1,4 @@
-package brobot.eggthemall.encounter.monster;
+package brobot.eggthemall.monster;
 
 public enum World {
     POKEMON,

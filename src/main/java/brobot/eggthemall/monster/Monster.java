@@ -5,12 +5,11 @@ import brobot.eggthemall.EggThemAll;
 import brobot.eggthemall.castle.Castle;
 import net.dv8tion.jda.core.entities.User;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class MonsterType {
+public class Monster {
     protected final String name;
     protected final String spritePath;
     protected final long health;
@@ -22,7 +21,7 @@ public class MonsterType {
     protected transient long currentHealth;
     protected transient boolean alive;
 
-    public MonsterType(final String name, final String spritePath, final long health, final long attack, final long defense, final long eggRewardAmount) {
+    public Monster(final String name, final String spritePath, final long health, final long attack, final long defense, final long eggRewardAmount) {
         this.name = name;
         this.spritePath = spritePath;
         this.health = health;

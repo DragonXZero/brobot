@@ -1,6 +1,6 @@
 package brobot.eggthemall;
 
-import brobot.BrobotCommand;
+import brobot.RequestObject;
 import brobot.CommandHandler;
 import brobot.BrobotUtils;
 import brobot.ResponseObject;
@@ -16,14 +16,14 @@ public class EggCommandHandlerImpl implements CommandHandler {
         eggThemAll = new EggThemAll();
     }
 
-    public void executeCommand(final BrobotCommand brobotCommand, final ResponseObject responseObject) {
+    public void executeCommand(final RequestObject requestObject, final ResponseObject responseObject) {
         eggThemAll.updateResources();
 
         final StringBuilder response = responseObject.getResponseBldr();
-        final User attacker = brobotCommand.getAuthor();
-        final String command = brobotCommand.getCommand();
-        final long commandVal = brobotCommand.getCommandVal();
-        final List<Member> members = brobotCommand.getMentionedUsers();
+        final User attacker = requestObject.getAuthor();
+        final String command = requestObject.getCommand();
+        final long commandVal = requestObject.getCommandVal();
+        final List<Member> members = requestObject.getMentionedUsers();
 
         if (members != null && members.size() == 1) {
             // Commands that require a mentioned user referred to as the defender
