@@ -3,6 +3,7 @@ package brobot.eggthemall.encounter;
 import brobot.ResponseObject;
 import brobot.eggthemall.EggMessages;
 import brobot.eggthemall.EggUtils;
+import brobot.eggthemall.castle.Castle;
 import brobot.eggthemall.monster.Monster;
 import net.dv8tion.jda.core.entities.User;
 
@@ -21,8 +22,8 @@ public class Encounter {
         return monster;
     }
 
-    public BattleResult processAttack(final ResponseObject responseObject, final User attacker, final long damage) {
-        final long damageDealt = monster.resolveAttack(attacker, damage);
+    public FightResult resolveFight(final ResponseObject responseObject, final User attacker, final Castle castle) {
+        final long damageDealt = monster.calculateDamageTaken(attacker, castle.getAttackValue());
         if (damageDealt == 0) {
             responseObject.addMessage(EggUtils.constructFormattedString(EggMessages.ENCOUNTER_FIGHT_FAIL_NO_DAMAGE, attacker.getName()));
         } else {
@@ -30,19 +31,19 @@ public class Encounter {
                     monster.getName(), monster.getName(), monster.getCurrentHealth()));
         }
 
-        final BattleResult battleResult;
+        final FightResult fightResult;
         if (monster.isAlive()) {
-            long damageDealtToAttacker = monster.attack(responseObject, attacker);
-            battleResult = new BattleResult(true, damageDealtToAttacker);
+            long damageDealtToAttacker = monster.calculateDamageDealt(castle.getDefenseValue());
+            fightResult = new FightResult(true, damageDealtToAttacker);
         } else {
-            battleResult = new BattleResult(false, -1);
+            fightResult = new FightResult(false, -1);
             final double totalEggRewards = monster.getEggRewardAmount();
             for (Map.Entry<User, Long> entry : monster.getDamageReceivedMap().entrySet()) {
                 final long eggReward = (long) ((((double) entry.getValue()) / monster.getHealth()) * totalEggRewards);
-                battleResult.addEggReward(entry.getKey(), eggReward);
+                fightResult.addEggReward(entry.getKey(), eggReward);
             }
         }
 
-        return battleResult;
+        return fightResult;
     }
 }

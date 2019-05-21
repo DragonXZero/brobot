@@ -15,8 +15,8 @@ import java.util.Map;
 
 public class Utils {
 
-    public static void tickle(final User user, final StringBuilder messageToSend) {
-        messageToSend.append("Did someone say tickle??? You tickle ")
+    public static void tickle(final ResponseObject responseObject, final User user) {
+        responseObject.getResponseBldr().append("Did someone say tickle??? You tickle ")
             .append(EggUtils.bold(user.getName()))
             .append(" until they poo their pants a little bit. You regret it.");
     }

@@ -14,7 +14,6 @@ package brobot;/*
  * limitations under the License.
  */
 
-import brobot.eggthemall.EggThemAll;
 import brobot.pokemon.PokemonInfo;
 import net.dv8tion.jda.client.entities.Group;
 import net.dv8tion.jda.core.JDA;
@@ -28,10 +27,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-public class Brobot extends ListenerAdapter
+public class BrobotListener extends ListenerAdapter
 {
     private static MessageParser messageParser;
-    private static EggThemAll eggThemAll;
     public static Map<String, PokemonInfo> pokedex;
 
     /**
@@ -44,13 +42,12 @@ public class Brobot extends ListenerAdapter
         try
         {
             JDA jda = new JDABuilder(BrobotConstants.DEVELOPER_TOKEN)         // The token of the account that is logging in.
-                    .addEventListener(new Brobot())  // An instance of a class that will handle events.
+                    .addEventListener(new BrobotListener())  // An instance of a class that will handle events.
                     .build();
             jda.awaitReady(); // Blocking guarantees that JDA will be completely loaded.
             System.out.println("Finished Building JDA!");
 
             messageParser = new MessageParser();
-            eggThemAll = new EggThemAll();
 
             try {
                 pokedex = Utils.buildPokedex();

@@ -1,6 +1,6 @@
 package brobot.eggthemall.encounter;
 
-import brobot.Brobot;
+import brobot.BrobotListener;
 import brobot.Utils;
 import brobot.eggthemall.monster.Monster;
 import brobot.eggthemall.monster.Pokemon;
@@ -13,10 +13,10 @@ import java.nio.file.Paths;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RandomEncounterGenerator {
-    public Encounter generateRandomEncounter() {
+public class EncounterGenerator {
+    public static Encounter generateRandomEncounter() {
         final Random random = new Random();
-        final String imagesPathMac = "src/main/java/brobot/eggthemall/encounter/monster/images/pokemon/full";
+        final String imagesPathMac = "src/main/java/brobot/eggthemall/monster/images/pokemon/full";
 
         Object[] monsters = new File[] {};
         try {
@@ -28,7 +28,7 @@ public class RandomEncounterGenerator {
         final File monsterFile = ((Path) monsters[random.nextInt(monsters.length)]).toFile();
         String[] parts = monsterFile.getAbsolutePath().split("\\\\");
         String monsterImageName = parts[parts.length-1];
-        PokemonInfo pokemonInfo = Brobot.pokedex.get(
+        PokemonInfo pokemonInfo = BrobotListener.pokedex.get(
                 monsterImageName.substring(monsterImageName.lastIndexOf(".") - 3).split("\\.")[0]);
 
         final Monster monster;

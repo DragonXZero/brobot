@@ -1,7 +1,6 @@
 package brobot.eggthemall.monster;
 
 import brobot.ResponseObject;
-import brobot.eggthemall.EggThemAll;
 import brobot.eggthemall.castle.Castle;
 import net.dv8tion.jda.core.entities.User;
 
@@ -70,25 +69,22 @@ public class Monster {
         return alive;
     }
 
-    public long resolveAttack(final User attacker, final long damage) {
-        final long adjustedDamage = damage - defense;
-        final long damageDealt = adjustedDamage > 0 ? (adjustedDamage > currentHealth ? currentHealth : adjustedDamage) : 0;
-        final long totalDamageDealt = damageReceivedMap.getOrDefault(attacker, 0l) + damageDealt;
+    public long calculateDamageTaken(final User attacker, final long attackValue) {
+        final long adjustedDamage = attackValue - defense;
+        final long damageTaken = adjustedDamage > 0 ? (adjustedDamage > currentHealth ? currentHealth : adjustedDamage) : 0;
+        final long totalDamageDealt = damageReceivedMap.getOrDefault(attacker, 0l) + damageTaken;
         damageReceivedMap.put(attacker, totalDamageDealt);
-        currentHealth -= damageDealt;
+        currentHealth -= damageTaken;
 
         if (currentHealth == 0) {
             die();
         }
-        return damageDealt;
+        return damageTaken;
     }
 
-    public long attack(final ResponseObject responseObject, final User defender) {
-        final Castle defendersCastle = EggThemAll.castles.get(defender);
-        long defense = defendersCastle.getDefenseValue();
-
+    public long calculateDamageDealt(final long defenseValue) {
         Random random = new Random();
-        long damageDealt = attack * random.nextInt(10) - defense * random.nextInt(5);
+        long damageDealt = attack * random.nextInt(10) - defenseValue * random.nextInt(5);
         return damageDealt;
     }
 

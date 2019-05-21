@@ -1,9 +1,10 @@
 package brobot;
 
-import brobot.eggthemall.EggThemAllCommandExecutor;
-import brobot.markov.MarkovCommandExecutor;
+import brobot.eggthemall.EggThemAllCommandExecutorImpl;
+import brobot.markov.MarkovCommandExecutorImpl;
 
 public class CommandExecutorManager {
-    public static final EggThemAllCommandExecutor EGG_THEM_ALL_EXECUTOR = new EggThemAllCommandExecutor();
-    public static final MarkovCommandExecutor MARKOV = new MarkovCommandExecutor();
+    public static final BrobotCommandExecutorImpl BROBOT_COMMAND_EXECUTOR = new BrobotCommandExecutorImpl();
+    public static final EggThemAllCommandExecutorImpl EGG_THEM_ALL_EXECUTOR = new EggThemAllCommandExecutorImpl();
+    public static final MarkovCommandExecutorImpl MARKOV = new MarkovCommandExecutorImpl();
 }

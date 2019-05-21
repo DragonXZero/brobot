@@ -1,6 +1,6 @@
 package brobot.eggthemall.monster;
 
-public enum World {
+public enum GameWorld {
     POKEMON,
     FINAL_FANTASY_I
 }
