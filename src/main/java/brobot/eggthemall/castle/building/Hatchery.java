@@ -1,4 +1,4 @@
-package brobot.eggthemall.building;
+package brobot.eggthemall.castle.building;
 
 import brobot.eggthemall.EggConstants;
 import brobot.eggthemall.egg.EggType;

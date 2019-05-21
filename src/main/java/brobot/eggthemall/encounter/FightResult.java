@@ -5,12 +5,12 @@ import net.dv8tion.jda.core.entities.User;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BattleResult {
+public class FightResult {
     private final Map<User, Long> eggRewards;
     private final Boolean monsterAlive;
     private long damageDealt;
 
-    public BattleResult(final boolean monsterAlive, final long damageDealt) {
+    public FightResult(final boolean monsterAlive, final long damageDealt) {
         this.monsterAlive = monsterAlive;
         this.eggRewards = new HashMap<>();
         this.damageDealt = damageDealt;

@@ -1,6 +1,6 @@
 package brobot.eggthemall;
 
-import brobot.eggthemall.building.Hatchery;
+import brobot.eggthemall.castle.building.Hatchery;
 import brobot.eggthemall.castle.Castle;
 import brobot.eggthemall.egg.EggType;
 import net.dv8tion.jda.core.entities.User;
@@ -8,7 +8,7 @@ import net.dv8tion.jda.core.entities.User;
 import java.util.Map;
 
 public class EggTimer {
-    private long lastUpdated = -1;
+    private long lastUpdated;
     private int updateFrequency; // milliseconds
     private int eggBlessingIncrement;
 
