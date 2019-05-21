@@ -48,7 +48,7 @@ public class BrobotWorld {
             final Monster monster = currentEncounter.getMonster();
             final String encounterMessage = "A wild **" + monster.getName() + "** has appeared!\n" + monster.toString();
             responseObject.addMessage(encounterMessage);
-            responseObject.addImage(monster.getSpritePath());
+            responseObject.addImage(monster.getImagePath());
 //            responseObject.addMessage("What will you do?\n\t**1.** Attempt to seduce. \n\t**2.** Unzip. \n\t**3. **Admire.\n");
         }
     }

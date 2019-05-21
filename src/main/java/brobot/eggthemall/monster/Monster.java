@@ -1,7 +1,5 @@
 package brobot.eggthemall.monster;
 
-import brobot.ResponseObject;
-import brobot.eggthemall.castle.Castle;
 import net.dv8tion.jda.core.entities.User;
 
 import java.util.HashMap;
@@ -10,7 +8,7 @@ import java.util.Random;
 
 public class Monster {
     protected final String name;
-    protected final String spritePath;
+    protected final String imagePath;
     protected final long health;
     protected final long attack;
     protected final long defense;
@@ -20,9 +18,9 @@ public class Monster {
     protected transient long currentHealth;
     protected transient boolean alive;
 
-    public Monster(final String name, final String spritePath, final long health, final long attack, final long defense, final long eggRewardAmount) {
+    public Monster(final String name, final String imagePath, final long health, final long attack, final long defense, final long eggRewardAmount) {
         this.name = name;
-        this.spritePath = spritePath;
+        this.imagePath = imagePath;
         this.health = health;
         this.attack = attack;
         this.defense = defense;
@@ -37,8 +35,8 @@ public class Monster {
         return name;
     }
 
-    public String getSpritePath() {
-        return spritePath;
+    public String getImagePath() {
+        return imagePath;
     }
 
     public long getHealth() {
