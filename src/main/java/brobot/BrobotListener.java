@@ -156,9 +156,10 @@ public class BrobotListener extends ListenerAdapter
 
         if (message.getContentDisplay().equals("!active")) {
             // expire rolls created more than 30 seconds ago
+            final int minute = message.getCreationTime().getMinute();
             final int second = message.getCreationTime().getSecond();
             for (final Iterator<MudaeRoll> itr = rolls.iterator(); itr.hasNext(); ) {
-                if(itr.next().isExpired(second)) {
+                if(itr.next().isExpired(minute, second)) {
                     itr.remove();
                 }
             }
@@ -173,7 +174,7 @@ public class BrobotListener extends ListenerAdapter
             }
         }
         // process mudae message
-        if (author.getName().equals("Mudamaid 26")) {
+        else if (author.getName().equals("Mudamaid 26")) {
             final List<MessageEmbed> embeddedMessages = message.getEmbeds();
             if (embeddedMessages != null && !embeddedMessages.isEmpty()) {
                 final String name = embeddedMessages.get(0).getAuthor().getName();
@@ -182,7 +183,7 @@ public class BrobotListener extends ListenerAdapter
                 final int second = message.getCreationTime().getSecond();
                 final String link = "https://discordapp.com/channels/562115015776403458/569428458430660619/" + message.getIdLong();
                 if (!Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(show)) {
-                    rolls.add(new MudaeRoll(name, show, second, minute, link));
+                    rolls.add(new MudaeRoll(name, show, minute, second, link));
                     channel.sendMessage(name + " / " + show + "\n").queue();
                 }
             }
