@@ -5,7 +5,9 @@ import brobot.ResponseObject;
 import brobot.eggthemall.castle.building.Hatchery;
 import brobot.eggthemall.castle.Castle;
 import brobot.eggthemall.egg.EggType;
+import brobot.eggthemall.encounter.Encounter;
 import brobot.eggthemall.kid.KidType;
+import brobot.eggthemall.monster.Monster;
 import net.dv8tion.jda.core.entities.User;
 
 import java.util.*;
@@ -140,6 +142,16 @@ public class EggThemAll {
 
     public void fleeEncounter(final ResponseObject responseObject, final User attacker) {
         world.processFlee(responseObject, attacker);
+    }
+
+    public void displayEncounterInfo(final ResponseObject responseObject) {
+        final Encounter encounter = world.getCurrentEncounter(responseObject);
+        if (encounter != null) {
+            final Monster monster = encounter.getMonster();
+            if (monster != null && monster.isAlive()) {
+                responseObject.addMessage(monster.toString());
+            }
+        }
     }
 
     public void displayHelpInformation(final ResponseObject responseObject) {

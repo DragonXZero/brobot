@@ -40,6 +40,8 @@ public class EggConstants {
     public static final String CMD_ENCOUNTER_ATTACK_SHORTCUT = "f";
     public static final String CMD_ENCOUNTER_FLEE = "bitch";
     public static final String CMD_ENCOUNTER_FLEE_SHORTCUT = "r";
+    public static final String CMD_DISPLAY_ENCOUNTER_INFO = "encounterinfo";
+    public static final String CMD_DISPLAY_ENCOUNTER_INFO_SHORTCUT = "ei";
 
     /* Misc commands TODO - Might want to pull these out and put them into BrobotConstants */
     public static final String CMD_TICKLE = "tickle";

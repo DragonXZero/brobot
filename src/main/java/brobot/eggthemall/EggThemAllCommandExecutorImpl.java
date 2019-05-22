@@ -92,6 +92,11 @@ public class EggThemAllCommandExecutorImpl implements CommandExecutor {
                     eggThemAll.fleeEncounter(responseObject, attacker);
                     break;
                 }
+                case EggConstants.CMD_DISPLAY_ENCOUNTER_INFO:
+                case EggConstants.CMD_DISPLAY_ENCOUNTER_INFO_SHORTCUT: {
+                    eggThemAll.displayEncounterInfo(responseObject);
+                    break;
+                }
                 case EggConstants.CMD_DISPLAY_EGGBOARD: {
                     responseObject.addMessage(EggMessages.UNDER_CONSTRUCTION);
                     break;

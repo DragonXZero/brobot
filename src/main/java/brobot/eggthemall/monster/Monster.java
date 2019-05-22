@@ -92,6 +92,6 @@ public class Monster {
 
     @Override
     public String toString() {
-        return "\t**" + this.name + "** \n\t\t:heart: - " + currentHealth + " :crossed_swords: - " + attack + " :shield: - " + defense + "\n";
+        return "\t**" + this.name + "** \n\t\t:heart: - " + currentHealth + "/" + health + " :crossed_swords: - " + attack + " :shield: - " + defense + "\n";
     }
 }

@@ -1,5 +1,6 @@
 package brobot;
 
+import brobot.eggthemall.EggConstants;
 import brobot.eggthemall.EggMessages;
 import brobot.eggthemall.EggUtils;
 import brobot.eggthemall.castle.Castle;
@@ -53,7 +54,10 @@ public class BrobotWorld {
         }
     }
 
-    public Encounter getCurrentEncounter() {
+    public Encounter getCurrentEncounter(final ResponseObject responseObject) {
+        if (currentEncounter == null) {
+            responseObject.addMessage(EggMessages.ENCOUNTER_NO_ENCOUNTER);
+        }
         return currentEncounter;
     }
 
