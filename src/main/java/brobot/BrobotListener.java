@@ -14,6 +14,7 @@ package brobot;/*
  * limitations under the License.
  */
 
+import brobot.mudae.MudaeRoll;
 import brobot.pokemon.PokemonInfo;
 import net.dv8tion.jda.client.entities.Group;
 import net.dv8tion.jda.core.JDA;
@@ -25,12 +26,17 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class BrobotListener extends ListenerAdapter
 {
     private static MessageParser messageParser;
     public static Map<String, PokemonInfo> pokedex;
+    private static List<MudaeRoll> rolls;
+
 
     /**
      * This is the method where the program starts.
@@ -48,6 +54,7 @@ public class BrobotListener extends ListenerAdapter
             System.out.println("Finished Building JDA!");
 
             messageParser = new MessageParser();
+            rolls = new LinkedList<>();
 
             try {
                 pokedex = Utils.buildPokedex();
@@ -147,7 +154,40 @@ public class BrobotListener extends ListenerAdapter
 
         final ResponseObject responseObject = new ResponseObject();
 
-        if (!Utils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
+        if (message.getContentDisplay().equals("!active")) {
+            // expire rolls created more than 30 seconds ago
+            final int minute = message.getCreationTime().getMinute();
+            final int second = message.getCreationTime().getSecond();
+            for (final Iterator<MudaeRoll> itr = rolls.iterator(); itr.hasNext(); ) {
+                if(itr.next().isExpired(minute, second)) {
+                    itr.remove();
+                }
+            }
+
+            // get active rolls
+            StringBuilder activeRolls = new StringBuilder();
+            for (final MudaeRoll roll : rolls) {
+                activeRolls.append(roll.toString());
+            }
+            if (!activeRolls.toString().isEmpty()) {
+                channel.sendMessage(activeRolls.toString()).queue();
+            }
+        }
+        // process mudae message
+        else if (author.getName().equals("Mudamaid 26")) {
+            final List<MessageEmbed> embeddedMessages = message.getEmbeds();
+            if (embeddedMessages != null && !embeddedMessages.isEmpty()) {
+                final String name = embeddedMessages.get(0).getAuthor().getName();
+                final String show = embeddedMessages.get(0).getDescription();
+                final int minute = message.getCreationTime().getMinute();
+                final int second = message.getCreationTime().getSecond();
+                final String link = "https://discordapp.com/channels/562115015776403458/569428458430660619/" + message.getIdLong();
+                if (!Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(show)) {
+                    rolls.add(new MudaeRoll(name, show, minute, second, link));
+                    channel.sendMessage(name + " / " + show + "\n").queue();
+                }
+            }
+        } else if (!Utils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
             RequestObject requestObject = messageParser.parseMessage(responseObject, message);
             requestObject.executeCommand(responseObject);
         }
