@@ -19,7 +19,7 @@ public class MudaeRoll {
 
     public boolean isExpired(final int minute, final int second) {
         this.expiryTime = 30 - ((minute - createMinute) * 60 + (second - this.createSecond) % 60);
-        return expiryTime <= 0;
+        return expiryTime <= 0 || expiryTime > 30;
     }
 
     @Override

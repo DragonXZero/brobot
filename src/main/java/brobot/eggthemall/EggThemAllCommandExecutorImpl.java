@@ -14,7 +14,7 @@ public class EggThemAllCommandExecutorImpl implements CommandExecutor {
     }
 
     @Override
-    public void executeCommand(final RequestObject requestObject, final ResponseObject responseObject) {
+    public void executeCommand(final ResponseObject responseObject, final RequestObject requestObject) {
         eggThemAll.updateResources();
 
         final User attacker = requestObject.getAuthor();

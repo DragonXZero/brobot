@@ -26,7 +26,6 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,6 @@ public class BrobotListener extends ListenerAdapter
     private static MessageParser messageParser;
     public static Map<String, PokemonInfo> pokedex;
     private static List<MudaeRoll> rolls;
-
 
     /**
      * This is the method where the program starts.
@@ -154,54 +152,23 @@ public class BrobotListener extends ListenerAdapter
 
         final ResponseObject responseObject = new ResponseObject();
 
-        if (message.getContentDisplay().equals("!active")) {
-            // expire rolls created more than 30 seconds ago
-            final int minute = message.getCreationTime().getMinute();
-            final int second = message.getCreationTime().getSecond();
-            for (final Iterator<MudaeRoll> itr = rolls.iterator(); itr.hasNext(); ) {
-                if(itr.next().isExpired(minute, second)) {
-                    itr.remove();
-                }
-            }
-
-            // get active rolls
-            StringBuilder activeRolls = new StringBuilder();
-            for (int i = rolls.size() - 1; i >= 0; --i) {
-                String activeRoll = rolls.get(i).toString();
-                if (activeRolls.length() + activeRoll.length() >= 2000) {
-                    channel.sendMessage(activeRolls.toString()).queue();
-                    activeRolls.setLength(0);
-                }
-                activeRolls.append(activeRoll);
-            }
-
-            if (!activeRolls.toString().isEmpty()) {
-                channel.sendMessage(activeRolls.toString()).queue();
-            }
-        } else if (author.isBot() && author.getName().equals("Mudamaid 26")) {
-            final List<MessageEmbed> embeddedMessages = message.getEmbeds();
-            if (embeddedMessages != null && !embeddedMessages.isEmpty()) {
-                final MessageEmbed embeddedMessage = embeddedMessages.get(0);
-                final String name = embeddedMessages.get(0).getAuthor().getName();
-                final String show = embeddedMessages.get(0).getDescription();
-                final int minute = message.getCreationTime().getMinute();
-                final int second = message.getCreationTime().getSecond();
-                final String link = "https://discordapp.com/channels/562115015776403458/569428458430660619/" + message.getIdLong();
-                if (!Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(show) && show.length() < 200) {
-                    rolls.add(new MudaeRoll(name, show, minute, second, link));
-                    if (embeddedMessage.getFooter() == null) {
-                        channel.sendMessage("**" + name + "** / " + show + "\n").queue();
-                    }
-                }
-            }
+        // TODO - Do this in a cleaner way.
+        //  This is a special case since it's not a command, just parsing Mudae's message. For we will send a fake request object.
+        if (author.isBot() && author.getName().equals("Mudamaid 26")) {
+            RequestObject requestObject = messageParser.createMudaeMessage(responseObject, message);
+            requestObject.executeCommand(responseObject);
         } else if (!Utils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
             RequestObject requestObject = messageParser.parseMessage(responseObject, message);
             requestObject.executeCommand(responseObject);
         }
 
-        final StringBuilder responseBldr = responseObject.getResponseBldr();
-        if (responseBldr.length() > 0) {
-            channel.sendMessage(responseBldr.toString()).queue();
+        final List<StringBuilder> responseBldrs = responseObject.finalizeAndGetBldrs();
+        if (responseBldrs.size() > 0) {
+            for (StringBuilder responseBldr : responseBldrs) {
+                if (responseBldr.length() > 0) {
+                    channel.sendMessage(responseBldr.toString()).queue();
+                }
+            }
             for (String filePath : responseObject.getImages()) {
                 channel.sendFile(new File(filePath)).queue();
             }

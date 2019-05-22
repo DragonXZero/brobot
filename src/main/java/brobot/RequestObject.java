@@ -4,6 +4,7 @@ import java.util.List;
 
 import brobot.command.CommandType;
 import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 
 
@@ -13,14 +14,16 @@ public class RequestObject {
     private final List<Member> mentionedUsers;
     private final User author;
     private final String rawCommand;
+    private final Message discordMessage;
 
     public RequestObject(final CommandType commandType, final List<String> commandParts, final List<Member> mentionedUsers,
-                         final User author, final String rawCommand) {
+                         final User author, final String rawCommand, final Message discordMessage) {
         this.commandType = commandType;
         this.commandParts = commandParts;
         this.mentionedUsers = mentionedUsers;
         this.author = author;
         this.rawCommand = rawCommand;
+        this.discordMessage = discordMessage;
     }
 
     public CommandType getCommandType() {
@@ -54,11 +57,17 @@ public class RequestObject {
         return 0l;
     }
 
+    public Message getDiscordMessage() {
+        return discordMessage;
+    }
+
     public void executeCommand(ResponseObject responseObject) {
         if (commandType == CommandType.EGG_THEM_ALL) {
-            CommandExecutorManager.EGG_THEM_ALL_EXECUTOR.executeCommand(this, responseObject);
+            CommandExecutorManager.EGG_THEM_ALL_EXECUTOR.executeCommand(responseObject, this);
         } else if (commandType == CommandType.MARKOV) {
-            CommandExecutorManager.MARKOV.executeCommand(this, responseObject);
+            CommandExecutorManager.MARKOV.executeCommand(responseObject, this);
+        } else if (commandType == CommandType.MUDAE) {
+            CommandExecutorManager.MUDAE.executeCommand(responseObject, this);
         }
     }
 }

@@ -11,7 +11,7 @@ public class MarkovCommandExecutorImpl implements CommandExecutor {
         this.markov = new Markov();
     }
 
-    public void executeCommand(final RequestObject requestObject, final ResponseObject responseObject) {
+    public void executeCommand(final ResponseObject responseObject, final RequestObject requestObject) {
 
     }
 }
