@@ -166,25 +166,32 @@ public class BrobotListener extends ListenerAdapter
 
             // get active rolls
             StringBuilder activeRolls = new StringBuilder();
-            for (final MudaeRoll roll : rolls) {
-                activeRolls.append(roll.toString());
+            for (int i = rolls.size() - 1; i >= 0; --i) {
+                String activeRoll = rolls.get(i).toString();
+                if (activeRolls.length() + activeRoll.length() >= 2000) {
+                    channel.sendMessage(activeRolls.toString()).queue();
+                    activeRolls.setLength(0);
+                }
+                activeRolls.append(activeRoll);
             }
+
             if (!activeRolls.toString().isEmpty()) {
                 channel.sendMessage(activeRolls.toString()).queue();
             }
-        }
-        // process mudae message
-        else if (author.getName().equals("Mudamaid 26")) {
+        } else if (author.isBot() && author.getName().equals("Mudamaid 26")) {
             final List<MessageEmbed> embeddedMessages = message.getEmbeds();
             if (embeddedMessages != null && !embeddedMessages.isEmpty()) {
+                final MessageEmbed embeddedMessage = embeddedMessages.get(0);
                 final String name = embeddedMessages.get(0).getAuthor().getName();
                 final String show = embeddedMessages.get(0).getDescription();
                 final int minute = message.getCreationTime().getMinute();
                 final int second = message.getCreationTime().getSecond();
                 final String link = "https://discordapp.com/channels/562115015776403458/569428458430660619/" + message.getIdLong();
-                if (!Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(show)) {
+                if (!Utils.isNullOrEmpty(name) && !Utils.isNullOrEmpty(show) && show.length() < 200) {
                     rolls.add(new MudaeRoll(name, show, minute, second, link));
-                    channel.sendMessage(name + " / " + show + "\n").queue();
+                    if (embeddedMessage.getFooter() == null) {
+                        channel.sendMessage("**" + name + "** / " + show + "\n").queue();
+                    }
                 }
             }
         } else if (!Utils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
