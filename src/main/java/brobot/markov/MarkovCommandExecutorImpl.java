@@ -25,7 +25,7 @@ public class MarkovCommandExecutorImpl implements CommandExecutor {
         switch (command) {
             case MarkovConstants.CMD_N_MOST_FREQ:
             case MarkovConstants.CMD_N_MOST_FREQ_SHORTCUT: {
-                markov.getNMostFrequentlyUsedWord(responseObject, user);
+                markov.getNMostFrequentlyUsedWord(responseObject, user, commandVal);
                 break;
             }
             case MarkovConstants.CMD_MOST_FREQ_SHORTCUT:

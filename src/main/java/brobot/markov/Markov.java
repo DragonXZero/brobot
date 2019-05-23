@@ -14,7 +14,7 @@ public class Markov {
     }
 
     //these shouldnt return string
-    public String getNMostFrequentlyUsedWord(final ResponseObject responseObject, final User user){
+    public String getNMostFrequentlyUsedWord(final ResponseObject responseObject, final User user, final long n){
         return "";
     }
 }
