@@ -16,6 +16,7 @@ package brobot;/*
 
 import brobot.mudae.MudaeRoll;
 import brobot.pokemon.PokemonInfo;
+import brobot.schedule.ScheduleMessageManager;
 import net.dv8tion.jda.client.entities.Group;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -26,6 +27,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ public class BrobotListener extends ListenerAdapter
     private static MessageParser messageParser;
     public static Map<String, PokemonInfo> pokedex;
     private static List<MudaeRoll> rolls;
+    private static Map<String, ScheduleMessageManager> scheduleMsgChannels;
 
     /**
      * This is the method where the program starts.
@@ -53,6 +56,7 @@ public class BrobotListener extends ListenerAdapter
 
             messageParser = new MessageParser();
             rolls = new LinkedList<>();
+            scheduleMsgChannels = new HashMap<>();
 
             try {
                 pokedex = Utils.buildPokedex();
@@ -160,6 +164,25 @@ public class BrobotListener extends ListenerAdapter
         } else if (!Utils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
             RequestObject requestObject = messageParser.parseMessage(responseObject, message);
             requestObject.executeCommand(responseObject);
+
+            // Set up scheduled messages
+            // TODO - put this code in a proper place
+            if ("sm".equals(requestObject.getCommand())) {
+                String channelId = channel.getId();
+
+                // Make sure not to create duplicate messages for a channel
+                if (!scheduleMsgChannels.containsKey(channelId)) {
+                    ScheduleMessageManager smm = new ScheduleMessageManager(channel);
+                    smm.init();
+                    scheduleMsgChannels.put(channelId, smm);
+                    channel.sendMessage("Messages will be scheduled for this channel.").queue();
+                }
+                else {
+                    ScheduleMessageManager smm = scheduleMsgChannels.remove(channelId);
+                    smm.cancelAll();
+                    channel.sendMessage("Scheduled messages have been turned off for this channel.").queue();
+                }
+            }
         }
 
         final List<StringBuilder> responseBldrs = responseObject.finalizeAndGetBldrs();
