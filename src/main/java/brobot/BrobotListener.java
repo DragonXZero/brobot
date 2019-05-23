@@ -158,11 +158,10 @@ public class BrobotListener extends ListenerAdapter
 
         // TODO - Do this in a cleaner way.
         //  This is a special case since it's not a command, just parsing Mudae's message. For we will send a fake request object.
-        /*if (author.isBot() && author.getName().equals("Mudamaid 26")) {
+        if (author.isBot() && author.getName().equals("Mudamaid 26")) {
             RequestObject requestObject = messageParser.createMudaeMessage(responseObject, message);
             requestObject.executeCommand(responseObject);
-        } else*/
-        if (!Utils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
+        } else if (!Utils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
             RequestObject requestObject = messageParser.parseMessage(responseObject, message);
             requestObject.executeCommand(responseObject);
 
