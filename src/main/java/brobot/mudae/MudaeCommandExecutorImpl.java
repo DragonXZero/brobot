@@ -26,7 +26,8 @@ public class MudaeCommandExecutorImpl implements CommandExecutor {
                 mudae.addRoll(responseObject, requestObject.getDiscordMessage());
                 break;
             }
-            case MudaeConstants.CMD_SEND_MESSAGES: {
+            case MudaeConstants.CMD_SEND_MESSAGES:
+            case MudaeConstants.CMD_SEND_MESSAGES_SHORTCUT: {
                 mudae.scheduleMessages(responseObject, requestObject.getDiscordMessage().getChannel());
                 break;
             }
