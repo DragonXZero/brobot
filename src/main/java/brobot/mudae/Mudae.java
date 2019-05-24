@@ -2,17 +2,20 @@ package brobot.mudae;
 
 import brobot.ResponseObject;
 import brobot.Utils;
+import brobot.schedule.ScheduleMessageManager;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Mudae {
+    private final Map<String, ScheduleMessageManager> scheduleMsgChannels;
     private final List<MudaeRoll> rolls;
 
+
     public Mudae() {
+        this.scheduleMsgChannels = new HashMap<>();
         this.rolls = new LinkedList<>();
     }
 
@@ -52,5 +55,23 @@ public class Mudae {
                 }
             }
         }
+    }
+
+    public void scheduleMessages(final ResponseObject responseObject, final MessageChannel channel) {
+        // Set up scheduled messages
+        final String channelId = channel.getId();
+        // Make sure not to create duplicate messages for a channel
+        if (!scheduleMsgChannels.containsKey(channelId)) {
+            ScheduleMessageManager smm = new ScheduleMessageManager(channel);
+            smm.init();
+            scheduleMsgChannels.put(channelId, smm);
+            responseObject.addMessage(MudaeMessages.SEND_MESSAGE_ON);
+        }
+        else {
+            ScheduleMessageManager smm = scheduleMsgChannels.remove(channelId);
+            smm.cancelAll();
+            responseObject.addMessage(MudaeMessages.SEND_MESSAGE_OFF);
+        }
+
     }
 }

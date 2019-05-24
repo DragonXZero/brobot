@@ -15,14 +15,16 @@ public class RequestObject {
     private final User author;
     private final String rawCommand;
     private final Message discordMessage;
+    private final String channelId;
 
     public RequestObject(final CommandType commandType, final List<String> commandParts, final List<Member> mentionedUsers,
-                         final User author, final String rawCommand, final Message discordMessage) {
+                         final User author, final String rawCommand, final String channelId, final Message discordMessage) {
         this.commandType = commandType;
         this.commandParts = commandParts;
         this.mentionedUsers = mentionedUsers;
         this.author = author;
         this.rawCommand = rawCommand;
+        this.channelId = channelId;
         this.discordMessage = discordMessage;
     }
 
@@ -44,6 +46,10 @@ public class RequestObject {
 
     public String getRawCommand() {
         return rawCommand;
+    }
+
+    public String getChannelId() {
+        return channelId;
     }
 
     public String getCommand() {
