@@ -153,11 +153,11 @@ public class BrobotListener extends ListenerAdapter
         final ResponseObject responseObject = new ResponseObject();
 
 
-        if (msg.equals("!nag")) {
+        if (msg.equals("!nag") && !author.getId().equals("579027591164330024")) {
             sheetsQuickstart.nag(responseObject);
-        } else if (msg.equals("!nag tasks")) {
+        } else if (msg.equals("!nag tasks") && !author.getId().equals("579027591164330024")) {
             sheetsQuickstart.displayTasksForToday(responseObject);
-        } else if (msg.equals("!nag all")) {
+        } else if (msg.equals("!nag all") && !author.getId().equals("579027591164330024")) {
             try {
                 sheetsQuickstart.nag(responseObject);
                 sendMessageToAllChannels(responseObject, event);
