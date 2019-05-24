@@ -60,7 +60,7 @@ public class EggMessages {
             "**fight/f** : fights the monster in the encounter\n" +
             "**bitch/r** : ends the current encounter\n" +
             "**cake** :  mini-thanos the server\n" +
-            "**m active/m a** : displays all rolls made within the last 30 seconds\n + " +
+            "**m active/m a** : displays all rolls made within the last 30 seconds\n" +
             "**m send/m s** : schedules messages to be sent\n";
 }
 
