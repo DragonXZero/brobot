@@ -3,6 +3,7 @@ package brobot.mudae;
 import brobot.CommandExecutor;
 import brobot.RequestObject;
 import brobot.ResponseObject;
+import brobot.schedule.ScheduleMessageManager;
 
 public class MudaeCommandExecutorImpl implements CommandExecutor {
     private final Mudae mudae;
@@ -23,6 +24,11 @@ public class MudaeCommandExecutorImpl implements CommandExecutor {
             }
             case MudaeConstants.CMD_SPECIAL: {
                 mudae.addRoll(responseObject, requestObject.getDiscordMessage());
+                break;
+            }
+            case MudaeConstants.CMD_SEND_MESSAGES:
+            case MudaeConstants.CMD_SEND_MESSAGES_SHORTCUT: {
+                mudae.scheduleMessages(responseObject, requestObject.getDiscordMessage().getChannel());
                 break;
             }
             default: {

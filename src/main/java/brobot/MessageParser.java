@@ -14,12 +14,11 @@ public class MessageParser {
         final String content = discordMessage.getContentDisplay();
         final User author = discordMessage.getAuthor();
 
-        final String[] parts = content.substring(1).split(" ");
-        final List<String> commandParts = new ArrayList<>(Arrays.asList(parts));
+        final List<String> commandParts = new ArrayList<>(Arrays.asList(content.substring(1).split(" ")));
 
         final String commandPrefix = commandParts.get(0);
         final CommandType commandType;
-        switch (commandPrefix) {
+        switch (commandPrefix.charAt(0)+"") {
             case BrobotConstants.MARKOV_COMMAND_PREFIX:
             case BrobotConstants.MARKOV_COMMAND_PREFIX_SHORTCUT: {
                 commandType = CommandType.MARKOV;
@@ -36,11 +35,12 @@ public class MessageParser {
             }
         }
 
-        return new RequestObject(commandType, commandParts, discordMessage.getMentionedMembers(), author, content.toLowerCase(), discordMessage);
+        return new RequestObject(commandType, commandParts, discordMessage.getMentionedMembers(), author, content.toLowerCase(),
+                discordMessage.getChannel().getId(), discordMessage);
     }
 
     public RequestObject createMudaeMessage(final ResponseObject responseObject, final Message discordMessage) {
         return new RequestObject(CommandType.MUDAE, new ArrayList<>(Arrays.asList(new String[] {MudaeConstants.CMD_SPECIAL})),
-                null, null, null, discordMessage);
+                null, null, null, discordMessage.getChannel().getId(), discordMessage);
     }
 }
