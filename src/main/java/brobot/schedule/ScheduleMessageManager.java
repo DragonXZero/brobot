@@ -159,16 +159,16 @@ public class ScheduleMessageManager {
     }
 
     private Date getNextSpecificHour(int hour) {
-        if (hour < 0 || hour > 24) {    // using 24 hour format
+        if (hour < 0 || hour >= 24) {    // using 24 hour format
             return null;
         }
 
         Date dt = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(dt.getTime());
-        int currHour = cal.get(Calendar.HOUR);
+        int currHour = cal.get(Calendar.HOUR_OF_DAY);   // HOUR_OF_DAY - 24 hr format
 
-        cal.set(Calendar.HOUR, hour);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
