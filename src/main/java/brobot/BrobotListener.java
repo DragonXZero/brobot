@@ -14,7 +14,7 @@ package brobot;/*
  * limitations under the License.
  */
 
-import brobot.mudae.MudaeRoll;
+import brobot.nagger.SheetsQuickstart;
 import brobot.pokemon.PokemonInfo;
 import net.dv8tion.jda.client.entities.Group;
 import net.dv8tion.jda.core.JDA;
@@ -26,7 +26,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class BrobotListener extends ListenerAdapter
 {
     private static MessageParser messageParser;
     public static Map<String, PokemonInfo> pokedex;
-    private static List<MudaeRoll> rolls;
+    public static SheetsQuickstart sheetsQuickstart;
 
     /**
      * This is the method where the program starts.
@@ -52,7 +52,7 @@ public class BrobotListener extends ListenerAdapter
             System.out.println("Finished Building JDA!");
 
             messageParser = new MessageParser();
-            rolls = new LinkedList<>();
+            sheetsQuickstart = new SheetsQuickstart();
 
             try {
                 pokedex = Utils.buildPokedex();
@@ -152,9 +152,23 @@ public class BrobotListener extends ListenerAdapter
 
         final ResponseObject responseObject = new ResponseObject();
 
+
+        if (msg.equals("!nag") && !author.getId().equals("579027591164330024")) {
+            sheetsQuickstart.nag(responseObject);
+        } else if (msg.equals("!nag tasks") && !author.getId().equals("579027591164330024")) {
+            sheetsQuickstart.displayTasksForToday(responseObject);
+        } else if (msg.equals("!nag all") && !author.getId().equals("579027591164330024")) {
+            try {
+                sheetsQuickstart.nag(responseObject);
+                sendMessageToAllChannels(responseObject, event);
+                responseObject.getResponseBldr().setLength(0);
+            } catch (Exception e) {
+                // fail silently
+            }
+        }
         // TODO - Do this in a cleaner way.
-        //  This is a special case since it's not a command, just parsing Mudae's message. For we will send a fake request object.
-        if (author.isBot() && author.getName().equals("Mudamaid 26")) {
+        //  This is a special case since it's not a command, just parsing Mudae's message. For now we will send a fake request object.
+        else if (author.isBot() && author.getName().equals("Mudamaid 26")) {
             RequestObject requestObject = messageParser.createMudaeMessage(responseObject, message);
             requestObject.executeCommand(responseObject);
         } else if (!Utils.isNullOrEmpty(msg) && msg.charAt(0) == BrobotConstants.BROBOT_PREFIX) {
@@ -171,6 +185,28 @@ public class BrobotListener extends ListenerAdapter
             }
             for (String filePath : responseObject.getImages()) {
                 channel.sendFile(new File(filePath)).queue();
+            }
+        }
+    }
+
+    private void sendMessageToAllChannels(final ResponseObject responseObject, final MessageReceivedEvent event) throws InterruptedException {
+        final List<String> channelIds = Arrays.asList(new String[] {
+            "569428458430660619", // mudae main
+            "575921455863431168", // mudae trade
+            "575921683366412302", // mudae pokemon
+            "578430007437950987", // developerment
+            "579027591164330024", // test-bot
+            "562115015776403462", // general
+            "562132041379086364", // animoo
+            "566395406401929217" // board game
+        });
+
+        String messageToSend = responseObject.getResponseBldr().toString();
+        if (!messageToSend.isEmpty()) {
+            for (String channelId : channelIds) {
+                TextChannel textChannel = event.getGuild().getTextChannelById(Long.parseLong(channelId));
+                Thread.sleep(1000);
+                textChannel.sendMessage(messageToSend).queue();
             }
         }
     }

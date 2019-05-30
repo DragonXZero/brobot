@@ -1,6 +1,8 @@
 package brobot.eggthemall;
 
 import brobot.*;
+import brobot.mudae.MudaeConstants;
+import brobot.schedule.ScheduleMessageManager;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 
@@ -104,6 +106,9 @@ public class EggThemAllCommandExecutorImpl implements CommandExecutor {
                 case EggConstants.CMD_THANOS: {
                     eggThemAll.eatCake(responseObject);
                     break;
+                }
+                default: {
+                    responseObject.addMessage(EggMessages.INVALID_COMMAND);
                 }
             }
         }
