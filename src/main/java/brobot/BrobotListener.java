@@ -175,6 +175,21 @@ public class BrobotListener extends ListenerAdapter
             RequestObject requestObject = messageParser.parseMessage(responseObject, message);
             requestObject.executeCommand(responseObject);
         }
+        // This will execute any markov commands
+        else if (!Utils.isNullOrEmpty(msg) &&
+                (msg.indexOf(BrobotConstants.MARKOV_COMMAND_PREFIX) == 0 ||
+                        msg.indexOf(BrobotConstants.MARKOV_COMMAND_PREFIX_SHORTCUT) == 0)) {
+            RequestObject requestObject = messageParser.parseMessage(responseObject, message);
+            requestObject.executeCommand(responseObject);
+        }
+        // This will parse any messages from Mango and PHO.
+        else if (!Utils.isNullOrEmpty(msg) && (author.getName().equals("PHO") || author.getName().equals("Mango"))){
+            System.out.println(author.getName());
+            System.out.println(msg);
+            System.out.println("testing");
+            RequestObject requestObject = messageParser.parseMessage(responseObject, message);
+            requestObject.executeCommand(responseObject);
+        }
 
         final List<StringBuilder> responseBldrs = responseObject.finalizeAndGetBldrs();
         if (responseBldrs.size() > 0) {
